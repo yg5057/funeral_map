@@ -22,15 +22,6 @@ const FuneralArea = () => {
                     <ArrowBackIosRoundedIcon onClick={goBack} style={{ fontSize: '28px', color: 'var(--AlbescentWhite-950)' }} />
                 </BackBtnWrapper>
                 <ListWrapper>
-                    {/* <ListItem>
-                        <ChipWrapper>
-                            {chipAreas.map((chip, index) => (
-                                <Chip key={index} onClick={() => handleChipClick(chip.areas)}>
-                                    {chip.label}
-                                </Chip>
-                            ))}
-                        </ChipWrapper>
-                    </ListItem> */}
                     <ListItem>
                         <ListCard />
                     </ListItem>
@@ -71,8 +62,6 @@ const ListWrapper = styled.div`
     align-items: flex-start;
     width: 100%;
     height: fit-content;
-    
-    padding: 2.4rem;
     background-color: var(--Default-White);
 `;
 const ListItem = styled.div`
@@ -85,14 +74,3 @@ const ListItem = styled.div`
     gap: 2.4rem;
     background-color: var(--Default-White);
 `;
-const ChipWrapper = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
-    width: 100%;
-    height: fit-content;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-`;
-

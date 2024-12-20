@@ -7,6 +7,7 @@ import ParagraphM from '../typo/ParagraphM';
 import Caption from '../typo/Caption';
 import Button from '../button/Button';
 import Chip from '../chips/Chip';
+import ListDetailView from './ListDetailView';
 
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import LocalPhoneRoundedIcon from '@mui/icons-material/LocalPhoneRounded';
@@ -14,10 +15,14 @@ import StarsRoundedIcon from '@mui/icons-material/StarsRounded';
 import BookmarkAddedRoundedIcon from '@mui/icons-material/BookmarkAddedRounded';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
 
+
+
+
 const ListCard = () => {
     const [places, setPlaces] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedArea, setSelectedArea] = useState('');  // 선택된 지역 상태
+    const [filteredPlaces, setFilteredPlaces] = useState([]);
+    const [selectedPlace, setSelectedPlace] = useState(null);
     const itemsPerPage = 10;
 
     useEffect(() => {
@@ -29,6 +34,7 @@ const ListCard = () => {
                 }
                 const data = await response.json();
                 setPlaces(data);
+                setFilteredPlaces(data);
             } catch (error) {
                 console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
             }
@@ -51,20 +57,6 @@ const ListCard = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-    // 지역 필터링
-    const areaFilters = {
-        '강원도': ['강원'],
-        '서울/경기/인천': ['서울', '경기', '인천'],
-        '대전/세종/충남북': ['충남', '충북', '세종'],
-        '대구/경북': ['대구', '경북'],
-        '부산/울산/경남': ['부산', '울산', '경남'],
-        '광주/전남/전북': ['광주', '전남', '전북'],
-    };
-
-    const filteredPlaces = selectedArea
-        ? places.filter(place => areaFilters[selectedArea]?.includes(place.area))
-        : places;
-
     const currentItems = filteredPlaces.slice(indexOfFirstItem, indexOfLastItem);
 
     const handlePageChange = (pageNumber) => {
@@ -85,133 +77,160 @@ const ListCard = () => {
         }
     };
 
-    const chipAreas = [
-        { label: '강원도', value: '강원도' },
-        { label: '서울/경기/인천', value: '서울/경기/인천' },
-        { label: '대전/세종/충남북', value: '대전/세종/충남북' },
-        { label: '대구/경북', value: '대구/경북' },
-        { label: '부산/울산/경남', value: '부산/울산/경남' },
-        { label: '광주/전남/전북', value: '광주/전남/전북' },
-    ];
+    // 지역별 화면 표시 필터
+    const filterPlaces = (areaFilter) => {
+        if (!areaFilter) {
+            setFilteredPlaces(places);
+        } else {
+            const areaMapping = {
+                '강원도': ['강원'],
+                '서울/경기/인천': ['서울', '경기', '인천'],
+                '대전/세종/충남북': ['대전', '세종', '충남', '충북'],
+                '대구/경북': ['대구', '경북'],
+                '부산/울산/경남': ['부산', '울산', '경남'],
+                '광주/전남/전북': ['광주', '전남', '전북']
+            };
+            const filtered = places.filter(place => {
+                return areaMapping[areaFilter].includes(place.area);
+            });
+            setFilteredPlaces(filtered);
+        }
+        setCurrentPage(1);
+    };
 
-    const handleChipClick = (area) => {
-        setSelectedArea(area);
-        setCurrentPage(1);  // 필터링 후 첫 페이지로 리셋
+    const handleViewDetails = (place) => {
+        setSelectedPlace(place); // 선택된 장소 설정
+    };
+
+    const handleBackToList = () => {
+        setSelectedPlace(null); // 선택 해제
     };
 
     return (
         <ListContainer>
-            <ChipWrapper>
-                {chipAreas.map((chip, index) => (
-                    <Chip key={index} onClick={() => handleChipClick(chip.value)}>
-                        {chip.label}
-                    </Chip>
-                ))}
-            </ChipWrapper>
-            {currentItems.length === 0 ? (
-                <p>선택한 지역에 해당하는 장소가 없습니다.</p>
+            {selectedPlace ? (
+                // 상세보기 화면
+                <ListDetailView place={selectedPlace} onBack={handleBackToList} />
             ) : (
-                currentItems.map((place, index) => (
-                    <ListItem key={index}>
-                        <ContentsPhoto>
-                            <Slider {...settings}>
-                                {Object.values(place.photo || {}).map((img, imgIndex) => (
-                                    <ImageWrapper key={imgIndex}>
-                                        <Image src={img} alt={`Image ${imgIndex + 1}`} />
-                                    </ImageWrapper>
-                                ))}
-                            </Slider>
-                        </ContentsPhoto>
-                        <H6 fontFamily='var(--font-family-primary)' textAlign="center" fontWeight="700">
-                            [{place.area}] {place.title}
-                        </H6>
-                        <TextWrap>
-                            <TextRow>
-                                <PlaceRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.address)}</ParagraphM>
-                            </TextRow>
-                            <TextRow>
-                                <LocalPhoneRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                                <InfoRowWrap>
-                                    <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.phone1)}</ParagraphM>
-                                    <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.phone2)}</ParagraphM>
-                                </InfoRowWrap>
-                            </TextRow>
-                            <TextRow>
-                                <StarsRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                                <InfoRowWrap>
-                                    <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                        소비자 평균 만족도 <Span>{displayInfo(place.score)}/10점</Span>
-                                    </ParagraphM>
-                                </InfoRowWrap>
-                            </TextRow>
-                            <TextRow>
-                                <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600" color="#D59962">
-                                    * 소비자 평균 만족도는 AI 분석을 통해 소비자 리뷰를 평가하여 산출된 점수 임을 밝힙니다.
-                                </Caption>
-                            </TextRow>
-                            <TextRow>
-                                <BookmarkAddedRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                    {displayInfo(place.license)} 면허 보유
-                                </ParagraphM>
-                            </TextRow>
-                            <TextRowTop>
-                                <CreditCardRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                                <InfoRowWrap>
-                                    <InfoRow>
+                <>
+                    <ChipWrapper>
+                        <Chip onClick={() => filterPlaces(null)}>전체 보기</Chip>
+                        <Chip onClick={() => filterPlaces('강원도')}>강원도</Chip>
+                        <Chip onClick={() => filterPlaces('서울/경기/인천')}>서울/경기/인천</Chip>
+                        <Chip onClick={() => filterPlaces('대전/세종/충남북')}>대전/세종/충남북</Chip>
+                        <Chip onClick={() => filterPlaces('대구/경북')}>대구/경북</Chip>
+                        <Chip onClick={() => filterPlaces('부산/울산/경남')}>부산/울산/경남</Chip>
+                        <Chip onClick={() => filterPlaces('광주/전남/전북')}>광주/전남/전북</Chip>
+                    </ChipWrapper>
+                    {currentItems.length === 0 ? (
+                        <p>등록된 장소가 없습니다.</p>
+                    ) : (
+                        currentItems.map((place, index) => (
+                            <ListItem key={index}>
+                                <ContentsPhoto>
+                                    <Slider {...settings}>
+                                        {Object.values(place.photo || {}).map((img, imgIndex) => (
+                                            <ImageWrapper key={imgIndex}>
+                                                <Image src={img} alt={`Image ${imgIndex + 1}`} />
+                                            </ImageWrapper>
+                                        ))}
+                                    </Slider>
+                                </ContentsPhoto>
+                                <H6 fontFamily='var(--font-family-primary)' textAlign="center" fontWeight="700">
+                                    [{place.area}] {place.title}
+                                </H6>
+                                <TextWrap>
+                                    <TextRow>
+                                        <PlaceRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.address)}</ParagraphM>
+                                    </TextRow>
+                                    <TextRow>
+                                        <LocalPhoneRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.phone1)}</ParagraphM>
+                                    </TextRow>
+                                    <TextRow>
+                                        <StarsRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
                                         <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                            5kg
+                                            소비자 평균 만족도 <Span>{displayInfo(place.score)}/10점</Span>
                                         </ParagraphM>
+                                    </TextRow>
+                                    <TextRow>
+                                        <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600" color="#D59962">
+                                            * 소비자 평균 만족도는 AI 분석을 통해 소비자 리뷰를 평가하여 산출된 점수 임을 밝힙니다.
+                                        </Caption>
+                                    </TextRow>
+                                    <TextRow>
+                                        <BookmarkAddedRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
                                         <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                            {displayInfo(place.funeralPrice5kg)}
+                                            {displayInfo(place.license)} 면허 보유
                                         </ParagraphM>
-                                    </InfoRow>
-                                    <InfoRow>
-                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                            15kg
-                                        </ParagraphM>
-                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                            {displayInfo(place.funeralPrice15kg)}
-                                        </ParagraphM>
-                                    </InfoRow>
-                                    <InfoRow>
-                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                            1kg 소동물
-                                        </ParagraphM>
-                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                            {displayInfo(place.funeralPrice1kg)}
-                                        </ParagraphM>
-                                    </InfoRow>
-                                </InfoRowWrap>
-                            </TextRowTop>
-                        </TextWrap>
-                        <Button background="#E2BB8F" borderRadius='10px'>
-                            <ButtonConts> 상세보기 </ButtonConts>
-                        </Button>
-                    </ListItem>
-                ))
+                                    </TextRow>
+                                    <TextRowTop>
+                                        <CreditCardRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                                        <InfoRowWrap>
+                                            <InfoRow>
+                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                                    5kg
+                                                </ParagraphM>
+                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                                    {displayInfo(place.funeralPrice5kg)}
+                                                </ParagraphM>
+                                            </InfoRow>
+                                            <InfoRow>
+                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                                    15kg
+                                                </ParagraphM>
+                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                                    {displayInfo(place.funeralPrice15kg)}
+                                                </ParagraphM>
+                                            </InfoRow>
+                                            <InfoRow>
+                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                                    1kg 소동물
+                                                </ParagraphM>
+                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                                    {displayInfo(place.funeralPrice1kg)}
+                                                </ParagraphM>
+                                            </InfoRow>
+                                        </InfoRowWrap>
+                                    </TextRowTop>
+                                </TextWrap>
+                                <Button onClick={() => handleViewDetails(place)} background="#E2BB8F" borderRadius='10px'>
+                                    <ButtonConts> 상세보기 </ButtonConts>
+                                </Button>
+                            </ListItem>
+                        ))
+                    )}
+                    <Pagination>
+                        <PageButton onClick={handlePrevPage} disabled={currentPage === 1}>&lt;</PageButton>
+                        {[...Array(totalPages).keys()].map((number) => (
+                            <PageButton
+                                key={number}
+                                onClick={() => handlePageChange(number + 1)}
+                                isActive={currentPage === number + 1}
+                            >
+                                {number + 1}
+                            </PageButton>
+                        ))}
+                        <PageButton onClick={handleNextPage} disabled={currentPage === totalPages}>&gt;</PageButton>
+                    </Pagination>
+                </>
             )}
-            <Pagination>
-                <PageButton onClick={handlePrevPage} disabled={currentPage === 1}>&lt;</PageButton>
-                {[...Array(totalPages).keys()].map((number) => (
-                    <PageButton
-                        key={number}
-                        onClick={() => handlePageChange(number + 1)}
-                        isActive={currentPage === number + 1}
-                    >
-                        {number + 1}
-                    </PageButton>
-                ))}
-                <PageButton onClick={handleNextPage} disabled={currentPage === totalPages}>&gt;</PageButton>
-            </Pagination>
         </ListContainer>
     );
-}
+};
 
 export default ListCard;
 
 
+
+const ListContainer = styled.ul`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+`;
 const ChipWrapper = styled.div`
     display: flex;
     flex-direction: row;
@@ -222,20 +241,12 @@ const ChipWrapper = styled.div`
     gap: 1.5rem;
     flex-wrap: wrap;
 `;
-
-
-const ListContainer = styled.ul`
-    width: 100%;
-    height: 100%;
-    overflow-y: scroll;
-`;
-
 const ListItem = styled.li`
     display: flex;
     flex-direction: column;
     width: 100%;
     min-height: 7rem;
-    padding: 3.2rem 0;
+    padding: 3.2rem 2.4rem;
     align-items: flex-start;
     gap: 2.4rem;
     border-bottom: 1px solid var(--Grey);
@@ -294,13 +305,12 @@ const InfoRowWrap = styled.div`
     width: 100%;
     align-items: flex-start;
 `;
-
 const InfoRow = styled.div`
     display: flex;
     width: 20rem;
     max-width: 100%;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
 `;
 
 const Span = styled.span`

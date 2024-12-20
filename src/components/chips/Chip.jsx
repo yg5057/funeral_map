@@ -1,9 +1,9 @@
 import React from 'react'
 import styled, { keyframes } from 'styled-components';
 
-const Chip = ({ children }) => {
+const Chip = ({ onClick, children }) => {
     return (
-        <ChipWrapper>
+        <ChipWrapper onClick={onClick}>
             {children}
         </ChipWrapper>
     )

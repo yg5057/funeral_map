@@ -18,7 +18,7 @@ import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
 
 
 
-const ListCard = () => {
+const RecommendList = () => {
     const [places, setPlaces] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [filteredPlaces, setFilteredPlaces] = useState([]);
@@ -53,7 +53,6 @@ const ListCard = () => {
         slidesToScroll: 1,
     };
 
-    // 페이지네이션 처리
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
@@ -98,19 +97,10 @@ const ListCard = () => {
         setCurrentPage(1);
     };
 
-    const handleViewDetails = (place) => {
-        setSelectedPlace(place); // 선택된 장소 설정
-    };
-
-    const handleBackToList = () => {
-        setSelectedPlace(null); // 선택 해제
-    };
-
     return (
         <ListContainer>
             {selectedPlace ? (
-                // 상세보기 화면
-                <ListDetailView place={selectedPlace} onBack={handleBackToList} />
+                <ListDetailView place={selectedPlace} />
             ) : (
                 <>
                     <ChipWrapper>
@@ -195,8 +185,8 @@ const ListCard = () => {
                                         </InfoRowWrap>
                                     </TextRowTop>
                                 </TextWrap>
-                                <Button onClick={() => handleViewDetails(place)} background="#E2BB8F" borderRadius='10px'>
-                                    <ButtonConts> 상세보기 </ButtonConts>
+                                <Button background="#E2BB8F" borderRadius='10px'>
+                                    <ButtonConts> 예약하기 </ButtonConts>
                                 </Button>
                             </ListItem>
                         ))
@@ -220,7 +210,7 @@ const ListCard = () => {
     );
 };
 
-export default ListCard;
+export default RecommendList;
 
 
 

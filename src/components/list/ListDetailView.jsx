@@ -150,7 +150,13 @@ const ListDetailView = ({ place, onBack }) => {
                     index={3}
                     activeTab={activeTab}
                     hoveredTab={hoveredTab}
-                    onClick={handleTabClick}
+                    onClick={() => {
+                        if (place.homePage) {
+                            window.open(place.homePage, '_blank');
+                        } else {
+                            alert('홈페이지 정보가 없습니다.');
+                        }
+                    }}
                     onMouseEnter={handleTabHover}
                     onMouseLeave={handleTabLeave}
                     icon={LanguageOutlinedIcon}

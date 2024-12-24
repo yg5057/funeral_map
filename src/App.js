@@ -7,6 +7,7 @@ import Main from './pages/Main';
 import FuneralMap from './layout/FuneralMap';
 import FuneralRecommend from './pages/FuneralRecommend';
 import FuneralArea from './pages/FuneralArea';
+import FuneralRecommendList from './pages/FuneralRecommendList';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path='/map' element={<FuneralMap />} />
           <Route path='/recommend' element={<FuneralRecommend />} />
           <Route path='/area' element={<FuneralArea />} />
+          <Route path='/recommendList' element={<FuneralRecommendList />} />
         </Routes>
       </Layout>
     </Router>

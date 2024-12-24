@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 
@@ -8,14 +8,24 @@ import BtnOutLine from '../components/button/BtnOutLine'
 import H6 from '../components/typo/H6'
 import ParagraphM from '../components/typo/ParagraphM'
 import ParagraphL from '../components/typo/ParagraphL'
+import Modal from '../components/modal/Modal';
 
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 
 const FuneralRecommend = () => {
+    const [isModalOpen, setModalOpen] = useState(false);
 
     const navigate = useNavigate();
     const goBack = () => { navigate(-1); };
+
+    const openModal = () => { setModalOpen(true); };
+    const closeModal = () => { setModalOpen(false); };
+
+    const handleSubmit = (formData) => {
+        console.log('Form Submitted:', formData);
+        alert('폼 데이터가 제출되었습니다!');
+    };
 
     return (
         <Wrapper>
@@ -31,7 +41,7 @@ const FuneralRecommend = () => {
                         <H6 color={'#1b1b1b'} fontWeight={'700'} textAlign={'left'}>
                             마음을 나누는 마지막 여정을 함께합니다.<br />
                             반려동물 장례식장 추천서비스,<br />
-                            #무지개별# 입니다.
+                            <Span>#무지개별#</Span> 입니다.
                         </H6>
                         <ParagraphL color={'#3D454D'} fontWeight={'500'} textAlign={'left'}>
                             #무지개별#은 소중했던 반려동물과의 마지막 순간을 조금 더 평화롭고 아름답게 보내실 수 있도록 돕기위해 만들어졌습니다.
@@ -47,9 +57,9 @@ const FuneralRecommend = () => {
                             추천된 장례식장을 확인하실 수 있습니다.
                         </ParagraphL>
                         <ParagraphL color={'#3D454D'} fontWeight={'600'} textAlign={'left'}>
-                            그 마지막 순간, #무지개별#이 곁에 있겠습니다.
+                            그 마지막 순간, <Span>#무지개별#</Span>이 곁에 있겠습니다.
                         </ParagraphL>
-                        <BtnOutLine width={'100%'}>
+                        <BtnOutLine width={'100%'} onClick={openModal}>
                             <ParagraphM color={'var(--AlbescentWhite-300)'} fontWeight={'600'}>정보 입력하고 장례식장 추천 받기</ParagraphM>
                             <ArrowForwardIosRoundedIcon style={{ fontSize: '18px', color: 'var(--AlbescentWhite-300)' }} />
                         </BtnOutLine>
@@ -57,6 +67,11 @@ const FuneralRecommend = () => {
                 </ListWrapper>
                 <Footer />
             </MainView>
+
+            {/* 모달 */}
+            <Modal isOpen={isModalOpen} onClose={closeModal} onSubmit={handleSubmit}>
+
+            </Modal>
         </Wrapper>
     )
 }
@@ -116,4 +131,8 @@ const ListItem = styled.div`
     height: fit-content;
     gap: 2.4rem;
     background-color: var(--Default-White);
+`;
+const Span = styled.span`
+    font-family: var(--font-family-secondary);
+    font-weight: 300;
 `;

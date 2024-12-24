@@ -5,9 +5,9 @@ import styled, { keyframes } from 'styled-components';
 
 
 
-const MenuBtn = ({ children, onClick, padding, background, width }) => {
+const MenuBtn = ({ children, onClick, padding, background, width, borderRadius }) => {
     return (
-        <StyledButton onClick={onClick} padding={padding} background={background} width={width}>
+        <StyledButton onClick={onClick} padding={padding} background={background} width={width} borderRadius={borderRadius}>
             {children}
         </StyledButton>
     );
@@ -30,6 +30,7 @@ const StyledButton = styled.button.attrs(props => ({
         marginBottom: props.marginBottom || '0',
         background: props.background || 'auto',
         width: props.width || 'auto',
+        borderRadius: props.borderRadius || '.4rem',
     },
 }))`
     display: flex;

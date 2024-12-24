@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
-import Slider from 'react-slick';
 
 import H6 from '../typo/H6';
 import ParagraphM from '../typo/ParagraphM';
-import Caption from '../typo/Caption';
 import Button from '../button/Button';
 import Chip from '../chips/Chip';
 import ListDetailView from './ListDetailView';
 
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import LocalPhoneRoundedIcon from '@mui/icons-material/LocalPhoneRounded';
-import StarsRoundedIcon from '@mui/icons-material/StarsRounded';
 import BookmarkAddedRoundedIcon from '@mui/icons-material/BookmarkAddedRounded';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
+import AccessTimeRoundedIcon from '@mui/icons-material/AccessTimeRounded';
 
 
 
@@ -25,16 +24,17 @@ const ListCard = () => {
     const [selectedPlace, setSelectedPlace] = useState(null);
     const itemsPerPage = 10;
 
+
     useEffect(() => {
         const fetchPlaces = async () => {
             try {
-                const response = await fetch('/data/places_copy.json');
-                if (!response.ok) {
-                    throw new Error('네트워크 응답이 좋지 않습니다.');
-                }
-                const data = await response.json();
-                setPlaces(data);
-                setFilteredPlaces(data);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/stores`);
+                const placesWithArea = response.data.data.map(place => ({
+                    ...place,
+                    area: mapArea(place.storeAddress),
+                }));
+                setPlaces(placesWithArea || []);
+                setFilteredPlaces(placesWithArea || []);
             } catch (error) {
                 console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
             }
@@ -43,21 +43,33 @@ const ListCard = () => {
         fetchPlaces();
     }, []);
 
-    const displayInfo = (info) => info ? info : '정보 없음';
 
-    const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
+    // 지역 추출 함수
+    const mapArea = (storeAddress) => {
+        if (!storeAddress) return '기타';
+        if (storeAddress.includes('강원')) return '강원도';
+        if (storeAddress.includes('서울') || storeAddress.includes('경기') || storeAddress.includes('인천')) return '서울/경기/인천';
+        if (storeAddress.includes('대전') || storeAddress.includes('세종') || storeAddress.includes('충남') || storeAddress.includes('충북') || storeAddress.includes('충청남도') || storeAddress.includes('충청북도')) return '대전/세종/충남북';
+        if (storeAddress.includes('대구') || storeAddress.includes('경북') || storeAddress.includes('경상북도')) return '대구/경북';
+        if (storeAddress.includes('부산') || storeAddress.includes('울산') || storeAddress.includes('경남') || storeAddress.includes('경상남도')) return '부산/울산/경남';
+        if (storeAddress.includes('광주') || storeAddress.includes('전남') || storeAddress.includes('전북') || storeAddress.includes('전라남도') || storeAddress.includes('전라북도')) return '광주/전남/전북';
+        return '기타';
     };
+
+
+
+    const displayInfo = (info) => info ? ` ${info}` : '정보 없음';
+    const displayPrice = (price) => price ? ` ${price} 원` : '정보 없음';
+    const displaySkill = (skill) => skill ? ` ${skill} 면허 보유` : '정보 없음';
+
 
     // 페이지네이션 처리
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-    const currentItems = filteredPlaces.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = Array.isArray(filteredPlaces)
+        ? filteredPlaces.slice(indexOfFirstItem, indexOfLastItem)
+        : [];
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -77,22 +89,14 @@ const ListCard = () => {
         }
     };
 
+
+
     // 지역별 화면 표시 필터
     const filterPlaces = (areaFilter) => {
         if (!areaFilter) {
             setFilteredPlaces(places);
         } else {
-            const areaMapping = {
-                '강원도': ['강원'],
-                '서울/경기/인천': ['서울', '경기', '인천'],
-                '대전/세종/충남북': ['대전', '세종', '충남', '충북'],
-                '대구/경북': ['대구', '경북'],
-                '부산/울산/경남': ['부산', '울산', '경남'],
-                '광주/전남/전북': ['광주', '전남', '전북']
-            };
-            const filtered = places.filter(place => {
-                return areaMapping[areaFilter].includes(place.area);
-            });
+            const filtered = places.filter(place => place.area === areaFilter);
             setFilteredPlaces(filtered);
         }
         setCurrentPage(1);
@@ -109,7 +113,6 @@ const ListCard = () => {
     return (
         <ListContainer>
             {selectedPlace ? (
-                // 상세보기 화면
                 <ListDetailView place={selectedPlace} onBack={handleBackToList} />
             ) : (
                 <>
@@ -123,46 +126,46 @@ const ListCard = () => {
                         <Chip onClick={() => filterPlaces('광주/전남/전북')}>광주/전남/전북</Chip>
                     </ChipWrapper>
                     {currentItems.length === 0 ? (
-                        <p>등록된 장소가 없습니다.</p>
+                        <ListItemNull>
+                            <H6>등록된 장소가 없습니다.</H6>
+                        </ListItemNull>
                     ) : (
                         currentItems.map((place, index) => (
                             <ListItem key={index}>
                                 <ContentsPhoto>
-                                    <Slider {...settings}>
-                                        {Object.values(place.photo || {}).map((img, imgIndex) => (
-                                            <ImageWrapper key={imgIndex}>
-                                                <Image src={img} alt={`Image ${imgIndex + 1}`} />
-                                            </ImageWrapper>
-                                        ))}
-                                    </Slider>
+                                    <ImageWrapper>
+                                        <Image
+                                            src={place.thumbnail || require('../../assets/images/non_thumbnail.png')}
+                                            alt={`image_thumbnail`}
+                                        />
+                                    </ImageWrapper>
                                 </ContentsPhoto>
-                                <H6 fontFamily='var(--font-family-primary)' textAlign="center" fontWeight="700">
-                                    [{place.area}] {place.title}
+                                <H6 fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="700">
+                                    [{place.area}] {place.storeName}
                                 </H6>
                                 <TextWrap>
                                     <TextRow>
                                         <PlaceRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.address)}</ParagraphM>
+                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.storeAddress)}</ParagraphM>
                                     </TextRow>
                                     <TextRow>
                                         <LocalPhoneRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.phone1)}</ParagraphM>
+                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.storeTel)}</ParagraphM>
                                     </TextRow>
                                     <TextRow>
-                                        <StarsRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                                        <LocalPhoneRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.storeTelSecond)}</ParagraphM>
+                                    </TextRow>
+                                    <TextRow>
+                                        <AccessTimeRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
                                         <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                            소비자 평균 만족도 <Span>{displayInfo(place.score)}/10점</Span>
+                                            {displayInfo(place.businessHours)}
                                         </ParagraphM>
-                                    </TextRow>
-                                    <TextRow>
-                                        <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600" color="#D59962">
-                                            * 소비자 평균 만족도는 AI 분석을 통해 소비자 리뷰를 평가하여 산출된 점수 임을 밝힙니다.
-                                        </Caption>
                                     </TextRow>
                                     <TextRow>
                                         <BookmarkAddedRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
                                         <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                            {displayInfo(place.license)} 면허 보유
+                                            {displaySkill(place.skill)}
                                         </ParagraphM>
                                     </TextRow>
                                     <TextRowTop>
@@ -170,10 +173,18 @@ const ListCard = () => {
                                         <InfoRowWrap>
                                             <InfoRow>
                                                 <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                                    1kg 소동물
+                                                </ParagraphM>
+                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                                    {displayPrice(place.smallAnimal)}
+                                                </ParagraphM>
+                                            </InfoRow>
+                                            <InfoRow>
+                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
                                                     5kg
                                                 </ParagraphM>
                                                 <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                                    {displayInfo(place.funeralPrice5kg)}
+                                                    {displayPrice(place.fiveKg)}
                                                 </ParagraphM>
                                             </InfoRow>
                                             <InfoRow>
@@ -181,15 +192,7 @@ const ListCard = () => {
                                                     15kg
                                                 </ParagraphM>
                                                 <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                                    {displayInfo(place.funeralPrice15kg)}
-                                                </ParagraphM>
-                                            </InfoRow>
-                                            <InfoRow>
-                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                                    1kg 소동물
-                                                </ParagraphM>
-                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                                    {displayInfo(place.funeralPrice1kg)}
+                                                    {displayPrice(place.fifteenKg)}
                                                 </ParagraphM>
                                             </InfoRow>
                                         </InfoRowWrap>
@@ -254,6 +257,16 @@ const ListItem = styled.li`
     background: var(--Default-White);
     cursor: pointer;
 `;
+const ListItemNull = styled.li`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    padding: 3.2rem 2.4rem;
+    align-items: center;
+    justify-content: center;
+    background: var(--Default-White);
+`;
 
 const ContentsPhoto = styled.div`
     width: 100%;
@@ -272,7 +285,8 @@ const Image = styled.img`
     width: 100%;
     height: 32rem;
     max-height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    border-radius: 15px;
 `;
 
 const TextWrap = styled.div`
@@ -312,10 +326,6 @@ const InfoRow = styled.div`
     max-width: 100%;
     justify-content: space-between;
     align-items: flex-start;
-`;
-
-const Span = styled.span`
-  color: var(--Albescent-White-700, #9E5330);
 `;
 
 const ButtonConts = styled.div`

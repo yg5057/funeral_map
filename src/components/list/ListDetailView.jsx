@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Slider from 'react-slick';
+
 
 import H6 from '../typo/H6';
 import ParagraphM from '../typo/ParagraphM';
-import Caption from '../typo/Caption';
 import BtnOutLine from '../button/BtnOutLine';
 import TabMenu from '../tab/TabMenu';
 import TabContent from '../tab/TabContent';
@@ -12,7 +11,7 @@ import TabContent from '../tab/TabContent';
 
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import LocalPhoneRoundedIcon from '@mui/icons-material/LocalPhoneRounded';
-import StarsRoundedIcon from '@mui/icons-material/StarsRounded';
+import AccessTimeRoundedIcon from '@mui/icons-material/AccessTimeRounded';
 import BookmarkAddedRoundedIcon from '@mui/icons-material/BookmarkAddedRounded';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -21,19 +20,12 @@ import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
 
 
 const ListDetailView = ({ place, onBack }) => {
-
-    const displayInfo = (info) => info ? info : '정보 없음';
-
-    const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-    };
-
     const [activeTab, setActiveTab] = useState(0);
     const [hoveredTab, setHoveredTab] = useState(null);
+
+    const displayInfo = (info) => info ? ` ${info}` : '정보 없음';
+    const displayPrice = (price) => price ? ` ${price} 원` : '정보 없음';
+    const displaySkill = (skill) => skill ? ` ${skill} 면허 보유` : '정보 없음';
 
     const handleTabClick = (index) => { setActiveTab(index); };
     const handleTabHover = (index) => { setHoveredTab(index); };
@@ -44,41 +36,39 @@ const ListDetailView = ({ place, onBack }) => {
         <DetailContainer>
             <ListItem >
                 <ContentsPhoto>
-                    <Slider {...settings}>
-                        {Object.values(place.photo || {}).map((img, imgIndex) => (
-                            <ImageWrapper key={imgIndex}>
-                                <Image src={img} alt={`Image ${imgIndex + 1}`} />
-                            </ImageWrapper>
-                        ))}
-                    </Slider>
+                    <ImageWrapper>
+                        <Image
+                            src={place.thumbnail || require('../../assets/images/non_thumbnail.png')}
+                            alt={`image_thumbnail`}
+                        />
+                    </ImageWrapper>
                 </ContentsPhoto>
                 <H6 fontFamily='var(--font-family-primary)' textAlign="center" fontWeight="700">
-                    [{place.area}] {place.title}
+                    [{place.area}] {place.storeName}
                 </H6>
                 <TextWrap>
                     <TextRow>
                         <PlaceRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.address)}</ParagraphM>
+                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.storeAddress)}</ParagraphM>
                     </TextRow>
                     <TextRow>
                         <LocalPhoneRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.phone1)}</ParagraphM>
+                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.storeTel)}</ParagraphM>
                     </TextRow>
                     <TextRow>
-                        <StarsRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                        <LocalPhoneRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.storeTelSecond)}</ParagraphM>
+                    </TextRow>
+                    <TextRow>
+                        <AccessTimeRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
                         <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                            소비자 평균 만족도 <Span>{displayInfo(place.score)}/10점</Span>
+                            {displayInfo(place.businessHours)}
                         </ParagraphM>
-                    </TextRow>
-                    <TextRow>
-                        <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600" color="#D59962">
-                            * 소비자 평균 만족도는 AI 분석을 통해 소비자 리뷰를 평가하여 산출된 점수 임을 밝힙니다.
-                        </Caption>
                     </TextRow>
                     <TextRow>
                         <BookmarkAddedRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
                         <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                            {displayInfo(place.license)} 면허 보유
+                            {displaySkill(place.skill)}
                         </ParagraphM>
                     </TextRow>
                     <TextRowTop>
@@ -86,10 +76,18 @@ const ListDetailView = ({ place, onBack }) => {
                         <InfoRowWrap>
                             <InfoRow>
                                 <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                    1kg 소동물
+                                </ParagraphM>
+                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                    {displayPrice(place.smallAnimal)}
+                                </ParagraphM>
+                            </InfoRow>
+                            <InfoRow>
+                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
                                     5kg
                                 </ParagraphM>
                                 <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                    {displayInfo(place.funeralPrice5kg)}
+                                    {displayPrice(place.fiveKg)}
                                 </ParagraphM>
                             </InfoRow>
                             <InfoRow>
@@ -97,15 +95,7 @@ const ListDetailView = ({ place, onBack }) => {
                                     15kg
                                 </ParagraphM>
                                 <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                    {displayInfo(place.funeralPrice15kg)}
-                                </ParagraphM>
-                            </InfoRow>
-                            <InfoRow>
-                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                    1kg 소동물
-                                </ParagraphM>
-                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                    {displayInfo(place.funeralPrice1kg)}
+                                    {displayPrice(place.fifteenKg)}
                                 </ParagraphM>
                             </InfoRow>
                         </InfoRowWrap>
@@ -151,8 +141,8 @@ const ListDetailView = ({ place, onBack }) => {
                     activeTab={activeTab}
                     hoveredTab={hoveredTab}
                     onClick={() => {
-                        if (place.homePage) {
-                            window.open(place.homePage, '_blank');
+                        if (place.link) {
+                            window.open(place.link, '_blank');
                         } else {
                             alert('홈페이지 정보가 없습니다.');
                         }
@@ -209,7 +199,7 @@ const Image = styled.img`
     width: 100%;
     height: 32rem;
     max-height: 100%;
-    object-fit: contain;
+    object-fit: cover;
 `;
 
 const TextWrap = styled.div`

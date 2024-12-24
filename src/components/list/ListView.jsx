@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import ParagraphM from '../typo/ParagraphM';
 import ParagraphS from '../typo/ParagraphS';
+import Caption from '../typo/Caption';
 
 const ListView = ({ setEndAddress, searchQuery, showOverlay, setIsOpen }) => {
     const [places, setPlaces] = useState([]);
@@ -11,7 +12,6 @@ const ListView = ({ setEndAddress, searchQuery, showOverlay, setIsOpen }) => {
     useEffect(() => {
         const fetchPlaces = async () => {
             try {
-                // const response = await fetch('/data/places.json');
                 const response = await fetch('/data/places_copy.json');
                 if (!response.ok) {
                     throw new Error('네트워크 응답이 좋지 않습니다.');
@@ -31,11 +31,6 @@ const ListView = ({ setEndAddress, searchQuery, showOverlay, setIsOpen }) => {
     const setDestination = (place) => {
         setEndAddress(place.address);
         showOverlay(place.address);
-        // alert(`도착지 위치가 "${place.title}"으로 선택되었습니다.`);
-
-        if (window.innerWidth <= 480) {
-            setIsOpen(false);
-        }
     };
 
     if (loading) {
@@ -49,7 +44,7 @@ const ListView = ({ setEndAddress, searchQuery, showOverlay, setIsOpen }) => {
     return (
         <ListContainer>
             {filteredPlaces.map((place, index) => {
-                const color = areaColors[place.area] || '#248CFA';
+                const color = areaColors[place.area] || '#E2BB8F';
                 return (
                     <ListItem key={index} onClick={() => setDestination(place)}>
                         <Eclipse color={color}>
@@ -58,6 +53,10 @@ const ListView = ({ setEndAddress, searchQuery, showOverlay, setIsOpen }) => {
                         <TextWrap>
                             <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">{place.title}</ParagraphM>
                             <ParagraphS fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500">{place.address}</ParagraphS>
+                            <Chip>
+                                <Caption fontFamily='var(--font-family-primary)' color='var(--AlbescentWhite-900)' textAlign="center" fontWeight="600">
+                                    소비자 평균 만족도 {place.score}/5점</Caption>
+                            </Chip>
                         </TextWrap>
                     </ListItem>
                 );
@@ -115,7 +114,6 @@ const Eclipse = styled.div`
     align-items: center;
     gap: 1rem;
     border-radius: 50px;
-    /* background-color: ${props => props.color || 'var(--AlbescentWhite-300);'}; */
     background-color: var(--AlbescentWhite-300);
     color: var(--Default-White);
 `;
@@ -127,4 +125,11 @@ const TextWrap = styled.div`
   align-items: flex-start;
   gap: .6rem;
 `;
-
+const Chip = styled.div`
+    display: flex;
+    padding: .4rem .8rem;
+    align-items: flex-start;
+    gap: 1rem;
+    border-radius: 3px;
+    background: var(--AlbescentWhite-100, #F5E9D7);
+`;

@@ -7,6 +7,7 @@ import ParagraphM from '../typo/ParagraphM';
 import Button from '../button/Button';
 import Chip from '../chips/Chip';
 import ListDetailView from './ListDetailView';
+import NonThumbNail from '../../assets/images/non_thumbnail.png';
 
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import LocalPhoneRoundedIcon from '@mui/icons-material/LocalPhoneRounded';
@@ -135,8 +136,9 @@ const ListCard = () => {
                                 <ContentsPhoto>
                                     <ImageWrapper>
                                         <Image
-                                            src={place.thumbnail || require('../../assets/images/non_thumbnail.png')}
+                                            src={place.thumbnail || NonThumbNail}
                                             alt={`image_thumbnail`}
+                                            onError={(e) => e.target.src = NonThumbNail}
                                         />
                                     </ImageWrapper>
                                 </ContentsPhoto>

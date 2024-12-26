@@ -62,39 +62,51 @@ const Map = () => {
 
 
     // 마커 추가 함수
-    const addMarkersFromPlaces = () => {
+    const addMarkersFromPlaces = async () => {
         if (!geocoder || !map) return;
 
-        fetch('/data/places_copy.json')
-            //  fetch('/data/places.json')
-            .then(response => response.json())
-            .then(data => {
-                setPlaces(data);
-                data.forEach(place => {
-                    geocoder.addressSearch(place.address, (result, status) => {
-                        if (status === kakao.maps.services.Status.OK) {
-                            const position = new kakao.maps.LatLng(result[0].y, result[0].x);
-                            const imageSrc = areaImageMap[place.area] || 'default_marker.png';
-                            const markerImage = new kakao.maps.MarkerImage(imageSrc, new kakao.maps.Size(25, 36.2));
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/stores`);
+            const data = response.data?.data || [];
 
-                            const marker = new kakao.maps.Marker({
-                                position,
-                                title: place.title,
-                                image: markerImage,
-                            });
+            setPlaces(data);
 
-                            marker.setMap(map);
-                            marker.setClickable(true);
-                            marker.kakaoPlaceData = place;
+            data.forEach(place => {
+                geocoder.addressSearch(place.storeAddress, (result, status) => {
+                    if (status === kakao.maps.services.Status.OK) {
+                        const position = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-                            kakao.maps.event.addListener(marker, 'click', () => handleMarkerClick(marker, place));
-                            setMarkers(prev => [...prev, marker]);
-                        }
-                    });
+                        const area = extractAreaFromAddress(place.storeAddress);
+                        const imageSrc = areaImageMap[area] || 'default_marker.png';
+                        const markerImage = new kakao.maps.MarkerImage(imageSrc, new kakao.maps.Size(25, 36.2));
+
+                        const marker = new kakao.maps.Marker({
+                            position,
+                            title: place.storeName,
+                            image: markerImage,
+                        });
+
+                        marker.setMap(map);
+                        marker.setClickable(true);
+                        marker.kakaoPlaceData = place;
+
+                        kakao.maps.event.addListener(marker, 'click', () => handleMarkerClick(marker, place));
+                        setMarkers(prev => [...prev, marker]);
+                    }
                 });
-            })
-            .catch(error => console.error("장소 마커 추가 중 오류 발생:", error));
+            });
+        } catch (error) {
+            console.error('장소 마커 추가 중 오류 발생:', error);
+        }
     };
+
+    // 주소에서 지역 이름을 추출하는 함수
+    const extractAreaFromAddress = (address) => {
+        const match = address.match(/(강원|경기|인천|경북|대구|경남|부산|울산|광주|전남|전북|충남|충북|세종)/);
+        return match ? match[0] : '기타';
+    };
+
+
 
 
     // 마커 클릭 핸들러 함수
@@ -103,30 +115,22 @@ const Map = () => {
     };
 
     const addCustomOverlay = (marker, place) => {
-        setEndAddress(place.address);
+        setEndAddress(place.storeAddress);
+        console.log(place.storeAddress)
 
         const additionalInfo = {
-            area: place.area,
-            title: place.title,
-            license: place.license,
-            photo: place.photo,
-            homePage: place.homePage,
-            address: place.address,
-            phone1: place.phone1,
-            phone2: place.phone2,
-            score: place.score,
-            funeralPrice5kg: place.funeralPrice5kg,
-            funeralPrice15kg: place.funeralPrice15kg,
+            id: place.id,
+            title: place.storeName,
+            license: place.skill,
+            photo: place.thumbnail,
+            homePage: place.link,
+            address: place.storeAddress,
+            phone1: place.storeTel,
+            phone2: place.storeTelSecond,
             funeralPrice1kg: place.funeralPrice1kg,
-            funeralPriceUrl: place.funeralPriceUrl,
-            funeralSupplies: place.funeralSupplies,
-            enshrinementPriceTag: place.enshrinementPriceTag,
-            memorialStone: place.memorialStone,
-            memorialStonePrice: place.memorialStonePrice,
-            review1: place.review1,
-            review2: place.review2,
-            review3: place.review3,
-            url: place.url,
+            funeralPrice5kg: place.fiveKg,
+            funeralPrice15kg: place.fifteenKg,
+            funeralPriceUrl: place.link,
         };
 
         const overlayContent = document.createElement('div');
@@ -170,36 +174,49 @@ const Map = () => {
 
 
     // 리스트 클릭 함수
-    const showOverlay = (address) => {
-        const selectedPlace = places.find(place => place.address === address);
+    const showOverlay = (storeAddress) => {
+        const selectedPlace = places.find(place => place.storeAddress === storeAddress);
         if (!selectedPlace) return;
 
-        geocoder.addressSearch(address, (result, status) => {
+        geocoder.addressSearch(storeAddress, (result, status) => {
             if (status === kakao.maps.services.Status.OK) {
                 const position = new kakao.maps.LatLng(result[0].y, result[0].x);
 
                 const additionalInfo = {
-                    area: selectedPlace.area,
-                    title: selectedPlace.title,
-                    license: selectedPlace.license,
-                    photo: selectedPlace.photo,
-                    homePage: selectedPlace.homePage,
-                    address: selectedPlace.address,
-                    phone1: selectedPlace.phone1,
-                    phone2: selectedPlace.phone2,
-                    score: selectedPlace.score,
-                    funeralPrice5kg: selectedPlace.funeralPrice5kg,
-                    funeralPrice15kg: selectedPlace.funeralPrice15kg,
+                    // area: selectedPlace.area,
+                    // title: selectedPlace.title,
+                    // license: selectedPlace.license,
+                    // photo: selectedPlace.photo,
+                    // homePage: selectedPlace.homePage,
+                    // address: selectedPlace.address,
+                    // phone1: selectedPlace.phone1,
+                    // phone2: selectedPlace.phone2,
+                    // score: selectedPlace.score,
+                    // funeralPrice5kg: selectedPlace.funeralPrice5kg,
+                    // funeralPrice15kg: selectedPlace.funeralPrice15kg,
+                    // funeralPrice1kg: selectedPlace.funeralPrice1kg,
+                    // funeralPriceUrl: selectedPlace.funeralPriceUrl,
+                    // funeralSupplies: selectedPlace.funeralSupplies,
+                    // enshrinementPriceTag: selectedPlace.enshrinementPriceTag,
+                    // memorialStone: selectedPlace.memorialStone,
+                    // memorialStonePrice: selectedPlace.memorialStonePrice,
+                    // review1: selectedPlace.review1,
+                    // review2: selectedPlace.review2,
+                    // review3: selectedPlace.review3,
+                    // url: selectedPlace.url,
+
+                    id: selectedPlace.id,
+                    title: selectedPlace.storeName,
+                    license: selectedPlace.skill,
+                    photo: selectedPlace.thumbnail,
+                    homePage: selectedPlace.link,
+                    address: selectedPlace.storeAddress,
+                    phone1: selectedPlace.storeTel,
+                    phone2: selectedPlace.storeTelSecond,
                     funeralPrice1kg: selectedPlace.funeralPrice1kg,
-                    funeralPriceUrl: selectedPlace.funeralPriceUrl,
-                    funeralSupplies: selectedPlace.funeralSupplies,
-                    enshrinementPriceTag: selectedPlace.enshrinementPriceTag,
-                    memorialStone: selectedPlace.memorialStone,
-                    memorialStonePrice: selectedPlace.memorialStonePrice,
-                    review1: selectedPlace.review1,
-                    review2: selectedPlace.review2,
-                    review3: selectedPlace.review3,
-                    url: selectedPlace.url,
+                    funeralPrice5kg: selectedPlace.fiveKg,
+                    funeralPrice15kg: selectedPlace.fifteenKg,
+                    funeralPriceUrl: selectedPlace.link,
                 };
 
 
@@ -257,6 +274,28 @@ const Map = () => {
                     if (status === kakao.maps.services.Status.OK) {
                         const endPosition = new kakao.maps.LatLng(result[0].y, result[0].x);
 
+                        const selectedPlace = places.find(place => place.storeAddress === endAddress);
+                        if (!selectedPlace) {
+                            console.error("해당 주소에 대한 장소를 찾을 수 없습니다:", endAddress);
+                            setLoading(false);
+                            return;
+                        }
+
+                        const additionalInfo = {
+                            id: selectedPlace.id,
+                            title: selectedPlace.storeName,
+                            license: selectedPlace.skill,
+                            photo: selectedPlace.thumbnail,
+                            homePage: selectedPlace.link,
+                            address: selectedPlace.storeAddress,
+                            phone1: selectedPlace.storeTel,
+                            phone2: selectedPlace.storeTelSecond,
+                            funeralPrice1kg: selectedPlace.funeralPrice1kg,
+                            funeralPrice5kg: selectedPlace.fiveKg,
+                            funeralPrice15kg: selectedPlace.fifteenKg,
+                            funeralPriceUrl: selectedPlace.link,
+                        };
+
                         const apiUrl = `https://apis-navi.kakaomobility.com/v1/directions?origin=${startPosition.getLng()},${startPosition.getLat()}&destination=${endPosition.getLng()},${endPosition.getLat()}&priority=RECOMMEND&vehicle=car`;
 
                         fetch(apiUrl, {
@@ -302,37 +341,10 @@ const Map = () => {
                                 endMarker.setMap(map);
                                 setMarkers(prev => [...prev, endMarker]);
 
-
                                 const distanceInKm = (distance / 1000).toFixed(1);
                                 const hours = Math.floor(duration / 3600);
                                 const minutes = Math.floor((duration % 3600) / 60);
                                 const durationString = `${hours}시간 ${minutes}분`;
-
-
-                                const selectedPlace = places.find(place => place.address === endAddress);
-                                const additionalInfo = {
-                                    area: selectedPlace?.area,
-                                    title: selectedPlace?.title,
-                                    license: selectedPlace?.license,
-                                    photo: selectedPlace?.photo,
-                                    homePage: selectedPlace?.homePage,
-                                    address: selectedPlace?.address,
-                                    phone1: selectedPlace?.phone1,
-                                    phone2: selectedPlace?.phone2,
-                                    score: selectedPlace?.score,
-                                    funeralPrice5kg: selectedPlace?.funeralPrice5kg,
-                                    funeralPrice15kg: selectedPlace?.funeralPrice15kg,
-                                    funeralPrice1kg: selectedPlace?.funeralPrice1kg,
-                                    funeralPriceUrl: selectedPlace?.funeralPriceUrl,
-                                    funeralSupplies: selectedPlace?.funeralSupplies,
-                                    enshrinementPriceTag: selectedPlace?.enshrinementPriceTag,
-                                    memorialStone: selectedPlace?.memorialStone,
-                                    memorialStonePrice: selectedPlace?.memorialStonePrice,
-                                    review1: selectedPlace?.review1,
-                                    review2: selectedPlace?.review2,
-                                    review3: selectedPlace?.review3,
-                                    url: selectedPlace?.url,
-                                };
 
                                 const overlayContent = document.createElement('div');
 

@@ -7,6 +7,7 @@ import { faPaw, faTimes, faCircleRight, faCircleChevronDown } from '@fortawesome
 import ParagraphS from '../typo/ParagraphS';
 import Caption from '../typo/Caption';
 import InfoRow from './InfoRow';
+import NonThumbNail from '../../assets/images/non_thumbnail.png';
 
 
 const CustomOverlayContent = ({ additionalInfo }) => {
@@ -16,6 +17,7 @@ const CustomOverlayContent = ({ additionalInfo }) => {
     const handleClose = () => { setIsVisible(false); };
     const toggleDetails = () => { setIsDetailsVisible(prev => !prev); };
     const displayInfo = (info) => { return info ? info : '정보 없음'; };
+    const displayPrice = (price) => price ? ` ${price} 원` : '정보 없음';
 
     const goToHomepage = () => { if (additionalInfo.homePage) { window.open(additionalInfo.funeralPriceUrl, '_blank'); } };
     const goToPrice = () => { if (additionalInfo.funeralPriceUrl) { window.open(additionalInfo.funeralPriceUrl, '_blank'); } };
@@ -51,13 +53,20 @@ const CustomOverlayContent = ({ additionalInfo }) => {
             </TitleWrapper>
             <ContentsWrapper>
                 <ContentsPhoto>
-                    <Slider {...settings}>
+                    {/* <Slider {...settings}>
                         {images.map((img, index) => (
                             <ImageWrapper key={index}>
                                 <Image src={img} alt={`Image ${index + 1}`} />
                             </ImageWrapper>
                         ))}
-                    </Slider>
+                    </Slider> */}
+                    <ImageWrapper>
+                        <Image
+                            src={additionalInfo.photo || NonThumbNail}
+                            alt={`image_thumbnail`}
+                            onError={(e) => e.target.src = NonThumbNail}
+                        />
+                    </ImageWrapper>
                 </ContentsPhoto>
                 <ContentsTop>
                     <TextRowTableHover onClick={toggleDetails} style={{ cursor: 'pointer' }}>
@@ -68,7 +77,7 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                     </TextRowTableHover>
                 </ContentsTop>
                 <ContentsBottom style={{ maxHeight: isDetailsVisible ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease-out' }}>
-                    <InfoRow title="평점">{displayInfo(additionalInfo.score)} 점</InfoRow>
+                    {/* <InfoRow title="평점">{displayInfo(additionalInfo.score)} 점</InfoRow> */}
                     <InfoRow title="면허 보유">{displayInfo(additionalInfo.license)}</InfoRow>
                     <TextRow onClick={goToHomepage} style={{ cursor: 'pointer' }}>
                         <ParagraphS fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600" color="var(--InfoWindow-conts-title)">
@@ -81,7 +90,6 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                     <InfoRow title="주소">{displayInfo(additionalInfo.address)}</InfoRow>
                     <InfoRow title="연락처">{displayInfo(additionalInfo.phone1)}</InfoRow>
                     <TextRowNonHover>
-                        <div />
                         <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
                             {displayInfo(additionalInfo.phone2)}
                         </Caption>
@@ -92,10 +100,21 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                         </ParagraphS>
                         <TextRowTable>
                             <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
+                                1kg 소동물
+                            </Caption>
+                            <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
+                                {displayPrice(additionalInfo.funeralPrice1kg)} 원
+                            </Caption>
+                        </TextRowTable>
+                    </TextRowNonHover>
+                    <TextRowNonHover>
+                        <div />
+                        <TextRowTable>
+                            <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
                                 5kg
                             </Caption>
                             <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
-                                {displayInfo(additionalInfo.funeralPrice5kg)} 원
+                                {displayPrice(additionalInfo.funeralPrice5kg)} 원
                             </Caption>
                         </TextRowTable>
                     </TextRowNonHover>
@@ -106,18 +125,7 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                                 15kg
                             </Caption>
                             <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
-                                {displayInfo(additionalInfo.funeralPrice15kg)} 원
-                            </Caption>
-                        </TextRowTable>
-                    </TextRowNonHover>
-                    <TextRowNonHover>
-                        <div />
-                        <TextRowTable>
-                            <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
-                                1kg 소동물
-                            </Caption>
-                            <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
-                                {displayInfo(additionalInfo.funeralPrice1kg)} 원
+                                {displayPrice(additionalInfo.funeralPrice15kg)} 원
                             </Caption>
                         </TextRowTable>
                     </TextRowNonHover>
@@ -130,8 +138,8 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                             <FontAwesomeIcon icon={faCircleRight} size="xl" style={{ color: "#D59962", }} />
                         </TextRowTable>
                     </TextRow>
-                    <InfoRow title="관, 수의 준비">{displayInfo(additionalInfo.funeralSupplies)}</InfoRow>
-                    <InfoRow title="봉안 비용표">{displayInfo(additionalInfo.enshrinementPriceTag)}</InfoRow>
+                    {/* <InfoRow title="관, 수의 준비">{displayInfo(additionalInfo.funeralSupplies)}</InfoRow>
+                    <InfoRow title="봉안 비용표">{displayInfo(additionalInfo.enshrinementPriceTag)}</InfoRow> */}
                     <TextRow>
                         <ParagraphS fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600" color="var(--InfoWindow-conts-title)">
                             대표 후기

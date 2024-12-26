@@ -1,23 +1,38 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 
 import ParagraphM from '../typo/ParagraphM';
 import ParagraphS from '../typo/ParagraphS';
 import Caption from '../typo/Caption';
 
-const ListView = ({ setEndAddress, searchQuery, showOverlay, setIsOpen }) => {
+
+const ListView = ({ setEndAddress, searchQuery, showOverlay }) => {
     const [places, setPlaces] = useState([]);
     const [loading, setLoading] = useState(true);
+
+
+    // 주소에서 지역 이름을 추출하는 함수
+    const extractAreaFromAddress = (address) => {
+        const match = address.match(/(강원|경기|인천|경북|대구|경남|부산|울산|광주|전남|전북|충남|충북|세종)/);
+        return match ? match[0] : '기타';
+    };
+
 
     useEffect(() => {
         const fetchPlaces = async () => {
             try {
-                const response = await fetch('/data/places_copy.json');
-                if (!response.ok) {
-                    throw new Error('네트워크 응답이 좋지 않습니다.');
-                }
-                const data = await response.json();
-                setPlaces(data);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/stores`);
+                const data = response.data?.data || [];
+
+                // 각 place에 area 값을 추가
+                const placesWithArea = data.map(place => ({
+                    ...place,
+                    area: extractAreaFromAddress(place.storeAddress)
+                }));
+
+                setPlaces(placesWithArea);
+
             } catch (error) {
                 console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
             } finally {
@@ -29,34 +44,62 @@ const ListView = ({ setEndAddress, searchQuery, showOverlay, setIsOpen }) => {
     }, []);
 
     const setDestination = (place) => {
-        setEndAddress(place.address);
-        showOverlay(place.address);
+        setEndAddress(place.storeAddress);  // 출발지 주소를 설정
+        showOverlay(place.storeAddress);    // 지도에 오버레이 표시
     };
 
     if (loading) {
         return <div>로딩 중...</div>;
     }
 
+
+    // 검색 필터링된 장소 목록
     const filteredPlaces = places.filter(place =>
-        place.title.includes(searchQuery) || place.address.includes(searchQuery)
+        place.storeName.includes(searchQuery) || place.storeAddress.includes(searchQuery)
     );
+
 
     return (
         <ListContainer>
             {filteredPlaces.map((place, index) => {
-                const color = areaColors[place.area] || '#E2BB8F';
+                const color = '#E2BB8F';
                 return (
                     <ListItem key={index} onClick={() => setDestination(place)}>
                         <Eclipse color={color}>
-                            <ParagraphM fontFamily='var(--font-family-primary)' textAlign="center" fontWeight="600" color="var(--Default-White)">{place.area}</ParagraphM>
+                            <ParagraphM
+                                fontFamily='var(--font-family-primary)'
+                                textAlign="center"
+                                fontWeight="600"
+                                color="var(--Default-White)"
+                            >
+                                {place.area}
+                            </ParagraphM>
                         </Eclipse>
                         <TextWrap>
-                            <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">{place.title}</ParagraphM>
-                            <ParagraphS fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500">{place.address}</ParagraphS>
-                            <Chip>
-                                <Caption fontFamily='var(--font-family-primary)' color='var(--AlbescentWhite-900)' textAlign="center" fontWeight="600">
-                                    소비자 평균 만족도 {place.score}/5점</Caption>
-                            </Chip>
+                            <ParagraphM
+                                fontFamily='var(--font-family-primary)'
+                                textAlign="left"
+                                fontWeight="600"
+                            >
+                                {place.storeName}
+                            </ParagraphM>
+                            <ParagraphS
+                                fontFamily='var(--font-family-primary)'
+                                textAlign="left"
+                                fontWeight="500"
+                            >
+                                {place.storeAddress}
+                            </ParagraphS>
+                            {/* <Chip>
+                                <Caption
+                                    fontFamily='var(--font-family-primary)'
+                                    color='var(--AlbescentWhite-900)'
+                                    textAlign="center"
+                                    fontWeight="600"
+                                >
+                                    소비자 평균 만족도 {place.score}/5점
+                                </Caption>
+                            </Chip> */}
                         </TextWrap>
                     </ListItem>
                 );
@@ -69,22 +112,6 @@ export default ListView;
 
 
 
-const areaColors = {
-    '강원': '#fb7fcc',
-    '경기': '#10C0DF',
-    '경남': '#D9BD4C',
-    '경북': '#004AAD',
-    '광주': '#FF5758',
-    '대구': '#004AAD',
-    '부산': '#D9BD4C',
-    '세종': '#58CD94',
-    '울산': '#D9BD4C',
-    '인천': '#10C0DF',
-    '전남': '#FF5758',
-    '전북': '#FF5758',
-    '충남': '#58CD94',
-    '충북': '#58CD94'
-};
 
 const ListContainer = styled.ul`
   height: 100%;

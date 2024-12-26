@@ -7,7 +7,7 @@ import ParagraphM from '../typo/ParagraphM';
 import BtnOutLine from '../button/BtnOutLine';
 import TabMenu from '../tab/TabMenu';
 import TabContent from '../tab/TabContent';
-
+import NonThumbNail from '../../assets/images/non_thumbnail.png';
 
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import LocalPhoneRoundedIcon from '@mui/icons-material/LocalPhoneRounded';
@@ -38,8 +38,9 @@ const ListDetailView = ({ place, onBack }) => {
                 <ContentsPhoto>
                     <ImageWrapper>
                         <Image
-                            src={place.thumbnail || require('../../assets/images/non_thumbnail.png')}
+                            src={place.thumbnail || NonThumbNail}
                             alt={`image_thumbnail`}
+                            onError={(e) => e.target.src = NonThumbNail}
                         />
                     </ImageWrapper>
                 </ContentsPhoto>

@@ -90,6 +90,7 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                     <InfoRow title="주소">{displayInfo(additionalInfo.address)}</InfoRow>
                     <InfoRow title="연락처">{displayInfo(additionalInfo.phone1)}</InfoRow>
                     <TextRowNonHover>
+                        <div />
                         <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
                             {displayInfo(additionalInfo.phone2)}
                         </Caption>
@@ -103,7 +104,7 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                                 1kg 소동물
                             </Caption>
                             <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
-                                {displayPrice(additionalInfo.funeralPrice1kg)} 원
+                                {displayPrice(additionalInfo.funeralPrice1kg)}
                             </Caption>
                         </TextRowTable>
                     </TextRowNonHover>
@@ -114,7 +115,7 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                                 5kg
                             </Caption>
                             <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
-                                {displayPrice(additionalInfo.funeralPrice5kg)} 원
+                                {displayPrice(additionalInfo.funeralPrice5kg)}
                             </Caption>
                         </TextRowTable>
                     </TextRowNonHover>
@@ -125,7 +126,7 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                                 15kg
                             </Caption>
                             <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
-                                {displayPrice(additionalInfo.funeralPrice15kg)} 원
+                                {displayPrice(additionalInfo.funeralPrice15kg)}
                             </Caption>
                         </TextRowTable>
                     </TextRowNonHover>

@@ -14,10 +14,11 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
         phoneNumber: '',
         location: '',
         address: '',
+        requestTime: '',
         animalType: '',
-        petBreed: '',
         animalWight: '',
         searchType: '',
+        productOption: '',
     });
 
     const handleChange = (e) => {
@@ -119,19 +120,6 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
 
                     <InputRow>
                         <Caption color='var(--AlbescentWhite-950)' fontWeight='500' textAlign='left'>
-                            반려동물 종류 (**기타를 선택하신 분들만 입력해주세요)
-                        </Caption>
-                        <Input
-                            type="text"
-                            placeholder="반려동물 종류를 입력해주세요"
-                            name="petBreed"
-                            value={formData.petBreed}
-                            onChange={handleChange}
-                        />
-                    </InputRow>
-
-                    <InputRow>
-                        <Caption color='var(--AlbescentWhite-950)' fontWeight='500' textAlign='left'>
                             반려동물 무게(kg) **숫자만 입력해주세요
                         </Caption>
                         <Input
@@ -150,9 +138,9 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
                         <SelectWrapper>
                             <Select name="searchType" value={formData.searchType} onChange={handleChange}>
                                 <option value="">우선순위</option>
-                                <option value="가격">가격</option>
-                                <option value="수익">서비스</option>
-                                <option value="기타">거리</option>
+                                <option value="비용">가격</option>
+                                <option value="후기">서비스</option>
+                                <option value="거리">거리</option>
                             </Select>
                             <ArrowDropDownIcon
                                 style={{

@@ -24,7 +24,13 @@ const ListDetailView = ({ place, onBack }) => {
     const [hoveredTab, setHoveredTab] = useState(null);
 
     const displayInfo = (info) => info ? ` ${info}` : '정보 없음';
-    const displayPrice = (price) => price ? ` ${price} 원` : '정보 없음';
+    const displayPrice = (price) => {
+        const numericPrice = Number(price);
+        if (isNaN(numericPrice)) {
+            return '정보 없음';
+        }
+        return `${numericPrice.toLocaleString()} 원`;
+    };
     const displaySkill = (skill) => skill ? ` ${skill} 면허 보유` : '정보 없음';
 
     const handleTabClick = (index) => { setActiveTab(index); };

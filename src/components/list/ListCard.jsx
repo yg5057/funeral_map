@@ -60,7 +60,13 @@ const ListCard = () => {
 
 
     const displayInfo = (info) => info ? ` ${info}` : '정보 없음';
-    const displayPrice = (price) => price ? ` ${price} 원` : '정보 없음';
+    const displayPrice = (price) => {
+        const numericPrice = Number(price);
+        if (isNaN(numericPrice)) {
+            return '정보 없음';
+        }
+        return `${numericPrice.toLocaleString()} 원`;
+    };
     const displaySkill = (skill) => skill ? ` ${skill} 면허 보유` : '정보 없음';
 
 
@@ -232,6 +238,7 @@ export default ListCard;
 const ListContainer = styled.ul`
     width: 100%;
     height: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;

@@ -19,7 +19,13 @@ const InfoWindowContent = ({ distance, duration, additionalInfo }) => {
     const handleClose = () => { setIsVisible(false); };
     const toggleDetails = () => { setIsDetailsVisible(prev => !prev); };
     const displayInfo = (info) => { return info ? info : '정보 없음'; };
-    const displayPrice = (price) => price ? ` ${price} 원` : '정보 없음';
+    const displayPrice = (price) => {
+        const numericPrice = Number(price);
+        if (isNaN(numericPrice)) {
+            return '정보 없음';
+        }
+        return `${numericPrice.toLocaleString()} 원`;
+    };
 
     const goToHomepage = () => { if (additionalInfo.homePage) { window.open(additionalInfo.funeralPriceUrl, '_blank'); } };
     const goToPrice = () => { if (additionalInfo.funeralPriceUrl) { window.open(additionalInfo.funeralPriceUrl, '_blank'); } };

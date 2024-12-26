@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 
@@ -22,10 +23,19 @@ const FuneralRecommend = () => {
     const openModal = () => { setModalOpen(true); };
     const closeModal = () => { setModalOpen(false); };
 
-    const handleSubmit = (formData) => {
-        console.log('Form Submitted:', formData);
-        alert('폼 데이터가 제출되었습니다!');
+
+    const handleSubmit = async (formData) => {
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/maps/search`, formData);
+            const responseData = response.data;
+            navigate('/recommendlist', { state: { recommendData: responseData } });
+        } catch (error) {
+            alert('폼 데이터를 제출하는 중 오류가 발생했습니다.');
+        }
     };
+
+
+
 
     return (
         <Wrapper>

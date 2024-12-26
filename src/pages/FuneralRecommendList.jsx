@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 
 import MainView from '../layout/MainView';
@@ -9,6 +9,8 @@ import RecommendList from '../components/list/RecommendList';
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 
 const FuneralRecommendList = () => {
+    const location = useLocation();
+    const recommendData = location.state?.recommendData || [];
 
     const navigate = useNavigate();
     const goBack = () => { navigate(-1); };
@@ -23,7 +25,7 @@ const FuneralRecommendList = () => {
                 </BackBtnWrapper>
                 <ListWrapper>
                     <ListItem>
-                        <RecommendList />
+                        <RecommendList data={recommendData} />
                     </ListItem>
                 </ListWrapper>
                 <Footer />

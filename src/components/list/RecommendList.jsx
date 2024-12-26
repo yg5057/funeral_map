@@ -1,211 +1,121 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import Slider from 'react-slick';
 
 import H6 from '../typo/H6';
 import ParagraphM from '../typo/ParagraphM';
-import Caption from '../typo/Caption';
 import Button from '../button/Button';
-import Chip from '../chips/Chip';
-import ListDetailView from './ListDetailView';
+import NonThumbNail from '../../assets/images/non_thumbnail.png';
 
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import LocalPhoneRoundedIcon from '@mui/icons-material/LocalPhoneRounded';
 import StarsRoundedIcon from '@mui/icons-material/StarsRounded';
 import BookmarkAddedRoundedIcon from '@mui/icons-material/BookmarkAddedRounded';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
+import AccessTimeRoundedIcon from '@mui/icons-material/AccessTimeRounded';
 
 
 
 
-const RecommendList = () => {
-    const [places, setPlaces] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [filteredPlaces, setFilteredPlaces] = useState([]);
-    const [selectedPlace, setSelectedPlace] = useState(null);
-    const itemsPerPage = 10;
+const RecommendList = ({ data }) => {
+    const dataArray = Array.isArray(data) ? data : Object.values(data);
+    const limitedData = dataArray.slice(0, 10);
 
-    useEffect(() => {
-        const fetchPlaces = async () => {
-            try {
-                const response = await fetch('/data/places_copy.json');
-                if (!response.ok) {
-                    throw new Error('네트워크 응답이 좋지 않습니다.');
-                }
-                const data = await response.json();
-                setPlaces(data);
-                setFilteredPlaces(data);
-            } catch (error) {
-                console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
-            }
-        };
-
-        fetchPlaces();
-    }, []);
-
-    const displayInfo = (info) => info ? info : '정보 없음';
-
-    const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-    };
-
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
-    const currentItems = filteredPlaces.slice(indexOfFirstItem, indexOfLastItem);
-
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
-
-    const totalPages = Math.ceil(filteredPlaces.length / itemsPerPage);
-
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
+    const displayInfo = (info) => info ? ` ${info}` : '정보 없음';
+    const displayPrice = (price) => {
+        const numericPrice = Number(price);
+        if (isNaN(numericPrice)) {
+            return '정보 없음';
         }
+        return `${numericPrice.toLocaleString()} 원`;
     };
-
-    const handlePrevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-
-    // 지역별 화면 표시 필터
-    const filterPlaces = (areaFilter) => {
-        if (!areaFilter) {
-            setFilteredPlaces(places);
-        } else {
-            const areaMapping = {
-                '강원도': ['강원'],
-                '서울/경기/인천': ['서울', '경기', '인천'],
-                '대전/세종/충남북': ['대전', '세종', '충남', '충북'],
-                '대구/경북': ['대구', '경북'],
-                '부산/울산/경남': ['부산', '울산', '경남'],
-                '광주/전남/전북': ['광주', '전남', '전북']
-            };
-            const filtered = places.filter(place => {
-                return areaMapping[areaFilter].includes(place.area);
-            });
-            setFilteredPlaces(filtered);
-        }
-        setCurrentPage(1);
-    };
+    const displaySkill = (skill) => skill ? ` ${skill} 면허 보유` : '정보 없음';
 
     return (
         <ListContainer>
-            {selectedPlace ? (
-                <ListDetailView place={selectedPlace} />
-            ) : (
-                <>
-                    <ChipWrapper>
-                        <Chip onClick={() => filterPlaces(null)}>전체 보기</Chip>
-                        <Chip onClick={() => filterPlaces('강원도')}>강원도</Chip>
-                        <Chip onClick={() => filterPlaces('서울/경기/인천')}>서울/경기/인천</Chip>
-                        <Chip onClick={() => filterPlaces('대전/세종/충남북')}>대전/세종/충남북</Chip>
-                        <Chip onClick={() => filterPlaces('대구/경북')}>대구/경북</Chip>
-                        <Chip onClick={() => filterPlaces('부산/울산/경남')}>부산/울산/경남</Chip>
-                        <Chip onClick={() => filterPlaces('광주/전남/전북')}>광주/전남/전북</Chip>
-                    </ChipWrapper>
-                    {currentItems.length === 0 ? (
-                        <p>등록된 장소가 없습니다.</p>
-                    ) : (
-                        currentItems.map((place, index) => (
-                            <ListItem key={index}>
-                                <ContentsPhoto>
-                                    <Slider {...settings}>
-                                        {Object.values(place.photo || {}).map((img, imgIndex) => (
-                                            <ImageWrapper key={imgIndex}>
-                                                <Image src={img} alt={`Image ${imgIndex + 1}`} />
-                                            </ImageWrapper>
-                                        ))}
-                                    </Slider>
-                                </ContentsPhoto>
-                                <H6 fontFamily='var(--font-family-primary)' textAlign="center" fontWeight="700">
-                                    [{place.area}] {place.title}
-                                </H6>
-                                <TextWrap>
-                                    <TextRow>
-                                        <PlaceRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.address)}</ParagraphM>
-                                    </TextRow>
-                                    <TextRow>
-                                        <LocalPhoneRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.phone1)}</ParagraphM>
-                                    </TextRow>
-                                    <TextRow>
-                                        <StarsRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                            소비자 평균 만족도 <Span>{displayInfo(place.score)}/10점</Span>
-                                        </ParagraphM>
-                                    </TextRow>
-                                    <TextRow>
-                                        <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600" color="#D59962">
-                                            * 소비자 평균 만족도는 AI 분석을 통해 소비자 리뷰를 평가하여 산출된 점수 임을 밝힙니다.
-                                        </Caption>
-                                    </TextRow>
-                                    <TextRow>
-                                        <BookmarkAddedRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                                        <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                            {displayInfo(place.license)} 면허 보유
-                                        </ParagraphM>
-                                    </TextRow>
-                                    <TextRowTop>
-                                        <CreditCardRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
-                                        <InfoRowWrap>
-                                            <InfoRow>
-                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                                    5kg
-                                                </ParagraphM>
-                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                                    {displayInfo(place.funeralPrice5kg)}
-                                                </ParagraphM>
-                                            </InfoRow>
-                                            <InfoRow>
-                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                                    15kg
-                                                </ParagraphM>
-                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                                    {displayInfo(place.funeralPrice15kg)}
-                                                </ParagraphM>
-                                            </InfoRow>
-                                            <InfoRow>
-                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                                    1kg 소동물
-                                                </ParagraphM>
-                                                <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
-                                                    {displayInfo(place.funeralPrice1kg)}
-                                                </ParagraphM>
-                                            </InfoRow>
-                                        </InfoRowWrap>
-                                    </TextRowTop>
-                                </TextWrap>
-                                <Button background="#E2BB8F" borderRadius='10px'>
-                                    <ButtonConts> 예약하기 </ButtonConts>
-                                </Button>
-                            </ListItem>
-                        ))
-                    )}
-                    <Pagination>
-                        <PageButton onClick={handlePrevPage} disabled={currentPage === 1}>&lt;</PageButton>
-                        {[...Array(totalPages).keys()].map((number) => (
-                            <PageButton
-                                key={number}
-                                onClick={() => handlePageChange(number + 1)}
-                                isActive={currentPage === number + 1}
-                            >
-                                {number + 1}
-                            </PageButton>
-                        ))}
-                        <PageButton onClick={handleNextPage} disabled={currentPage === totalPages}>&gt;</PageButton>
-                    </Pagination>
-                </>
-            )}
+            {limitedData.map((place, index) => (
+                <ListItem key={index}>
+                    <ContentsPhoto>
+                        <ImageWrapper>
+                            <Image
+                                src={place.thumbnail || NonThumbNail}
+                                alt={`image_thumbnail`}
+                                onError={(e) => e.target.src = NonThumbNail}
+                            />
+                        </ImageWrapper>
+                    </ContentsPhoto>
+                    <H6 fontFamily='var(--font-family-primary)' textAlign="center" fontWeight="700">
+                        [{place.address.slice(0, 2)}] {place.storeName}
+                    </H6>
+                    <TextWrap>
+                        <TextRow>
+                            <PlaceRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                            <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.address)}</ParagraphM>
+                        </TextRow>
+                        <TextRow>
+                            <LocalPhoneRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                            <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">{displayInfo(place.storeTel)}</ParagraphM>
+                        </TextRow>
+                        {/* <TextRow>
+                            <StarsRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                            <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                소비자 평균 만족도 <Span>{displayInfo(place.score)}/10점</Span>
+                            </ParagraphM>
+                        </TextRow>
+                        <TextRow>
+                            <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600" color="#D59962">
+                                * 소비자 평균 만족도는 AI 분석을 통해 소비자 리뷰를 평가하여 산출된 점수 임을 밝힙니다.
+                            </Caption>
+                        </TextRow> */}
+                        <TextRow>
+                            <AccessTimeRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                            <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                {displayInfo(place.businessHours)}
+                            </ParagraphM>
+                        </TextRow>
+                        <TextRow>
+                            <BookmarkAddedRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                            <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                {displaySkill(place.skill)}
+                            </ParagraphM>
+                        </TextRow>
+                        {/* <TextRowTop>
+                            <CreditCardRoundedIcon sx={{ color: '#371C13', fontSize: '1.8rem' }} />
+                            <InfoRowWrap>
+                                <InfoRow>
+                                    <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                        1kg 소동물
+                                    </ParagraphM>
+                                    <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                        {displayPrice(place.funeralPrice1kg)}
+                                    </ParagraphM>
+                                </InfoRow>
+                                <InfoRow>
+                                    <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                        5kg
+                                    </ParagraphM>
+                                    <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                        {displayPrice(place.funeralPrice5kg)}
+                                    </ParagraphM>
+                                </InfoRow>
+                                <InfoRow>
+                                    <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                        15kg
+                                    </ParagraphM>
+                                    <ParagraphM fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="500" color="#371c13">
+                                        {displayPrice(place.funeralPrice15kg)}
+                                    </ParagraphM>
+                                </InfoRow>
+                            </InfoRowWrap>
+                        </TextRowTop> */}
+                    </TextWrap>
+                    <CostBox>
+                        예상 장례비용은 {displayPrice(place.calculatePrice)} 입니다.
+                    </CostBox>
+                    <Button background="#E2BB8F" borderRadius='10px'>
+                        <ButtonConts> 예약하기 </ButtonConts>
+                    </Button>
+                </ListItem>
+            ))}
         </ListContainer>
     );
 };
@@ -217,20 +127,10 @@ export default RecommendList;
 const ListContainer = styled.ul`
     width: 100%;
     height: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
-`;
-const ChipWrapper = styled.div`
-    width: 100%;
-    height: fit-content;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 1.5rem;
-    padding: 0 2.4rem;
-    flex-wrap: wrap;
 `;
 const ListItem = styled.li`
     display: flex;
@@ -308,6 +208,27 @@ const Span = styled.span`
   color: var(--Albescent-White-700, #9E5330);
 `;
 
+const CostBox = styled.div`
+    display: flex;
+    width: 100%;
+    height: 4.5rem;
+    padding: 0.80rem 1.6rem;
+    justify-content: center;
+    align-items: center;
+    gap: .8rem;
+    border-radius: 10px;
+    background: var(--Default-White);
+    border: 1px solid var(--AlbescentWhite-400);
+    text-align: center;
+    color: var(--AlbescentWhite-400);
+    font-family: var(--font-family-primary);
+    font-size: 16px;
+    font-style: normal;
+    line-height: 24px; 
+    word-wrap: break-word;
+    word-break: keep-all;
+    text-align: center;
+`;
 const ButtonConts = styled.div`
     display: flex;
     flex-direction: row;
@@ -323,29 +244,3 @@ const ButtonConts = styled.div`
     color: var(--Default-White);
 `;
 
-const Pagination = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin: 3.2rem;
-`;
-
-const PageButton = styled.button`
-    padding: 0.5rem 1rem;
-    background-color: ${(props) => (props.isActive ? '#D59962' : 'transparent')}; 
-    border: 1px solid #E2BB8F;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: var(--font-family-primary);
-    font-weight: 600;
-    color: ${(props) => (props.isActive ? '#fff' : '#D59962')}; 
-    &:hover {
-        background-color: #C4A57D;
-        color: #fff;
-    }
-    &:disabled {
-        background-color: #ddd;
-        cursor: not-allowed;
-    }
-`;

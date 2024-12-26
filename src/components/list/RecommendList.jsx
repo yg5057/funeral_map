@@ -26,7 +26,7 @@ const RecommendList = ({ data }) => {
         if (isNaN(numericPrice)) {
             return '정보 없음';
         }
-        return `${numericPrice.toLocaleString()} 원`;
+        return `${numericPrice.toLocaleString()}원`;
     };
     const displaySkill = (skill) => skill ? ` ${skill} 면허 보유` : '정보 없음';
 
@@ -108,12 +108,14 @@ const RecommendList = ({ data }) => {
                             </InfoRowWrap>
                         </TextRowTop> */}
                     </TextWrap>
-                    <CostBox>
-                        예상 장례비용은 {displayPrice(place.calculatePrice)} 입니다.
-                    </CostBox>
-                    <Button background="#E2BB8F" borderRadius='10px'>
-                        <ButtonConts> 예약하기 </ButtonConts>
-                    </Button>
+                    <BottomWrap>
+                        <CostBox>
+                            예상 장례비용은 <Span>{displayPrice(place.calculatePrice)}</Span> 입니다.
+                        </CostBox>
+                        <Button background="#E2BB8F" borderRadius='10px'>
+                            <ButtonConts> 예약하기 </ButtonConts>
+                        </Button>
+                    </BottomWrap>
                 </ListItem>
             ))}
         </ListContainer>
@@ -205,9 +207,19 @@ const InfoRow = styled.div`
 `;
 
 const Span = styled.span`
-  color: var(--Albescent-White-700, #9E5330);
+  font-weight: 700;
+  color: var(--AlbescentWhite-600);
 `;
 
+const BottomWrap = styled.div`
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .8rem;
+    align-self: stretch;
+`;
 const CostBox = styled.div`
     display: flex;
     width: 100%;
@@ -243,4 +255,3 @@ const ButtonConts = styled.div`
     line-height: 24px;
     color: var(--Default-White);
 `;
-

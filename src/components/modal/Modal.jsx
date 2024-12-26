@@ -21,12 +21,20 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
         productOption: '',
     });
 
+    const [errorMessage, setErrorMessage] = useState('');
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = () => {
+        if (!formData.animalWight) {
+            setErrorMessage('반려동물 무게는 필수 입력 사항입니다.');
+            return;
+        }
+
+        setErrorMessage('');
         onSubmit(formData);
     };
 
@@ -129,6 +137,7 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
                             value={formData.animalWight}
                             onChange={handleChange}
                         />
+                        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
                     </InputRow>
 
                     <InputRow>
@@ -282,6 +291,11 @@ const Select = styled.select`
         outline: none;
         border-color: #5b9bd5;
     }
+`;
+const ErrorMessage = styled.div`
+    color: red;
+    font-size: 12px;
+    margin-top: 0.5rem;
 `;
 const BtnWrapper = styled.div`
     width: 100%;

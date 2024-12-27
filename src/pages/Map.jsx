@@ -116,7 +116,6 @@ const Map = () => {
 
     const addCustomOverlay = (marker, place) => {
         setEndAddress(place.storeAddress);
-        console.log(place.storeAddress)
 
         const additionalInfo = {
             id: place.id,

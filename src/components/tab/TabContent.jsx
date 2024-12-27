@@ -36,8 +36,6 @@ const TabContent = ({ activeTab, place }) => {
     const storeDetail = placesDetail?.storeDetail || [];
     const storeReviews = placesDetail?.storeReviews || [];
 
-    console.log(storeReviews)
-
     const displayInfo = (info) => info ? ` ${info}` : '정보 없음';
     const displayPrice = (price) => {
         const numericPrice = Number(price);

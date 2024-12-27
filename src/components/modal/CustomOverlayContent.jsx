@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Slider from 'react-slick';
+import axios from 'axios';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaw, faTimes, faCircleRight, faCircleChevronDown } from '@fortawesome/free-solid-svg-icons';
 
@@ -13,6 +14,23 @@ import NonThumbNail from '../../assets/images/non_thumbnail.png';
 const CustomOverlayContent = ({ additionalInfo }) => {
     const [isVisible, setIsVisible] = useState(true);
     const [isDetailsVisible, setIsDetailsVisible] = useState(false);
+    const [placesDetail, setPlacesDetail] = useState([]);
+
+
+    useEffect(() => {
+        const fetchPlaces = async () => {
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/store/${additionalInfo.id}`);
+                setPlacesDetail(response.data.data || []);
+            } catch (error) {
+                console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
+            }
+        };
+
+        fetchPlaces();
+    }, []);
+
+    const storeReviews = placesDetail?.storeReviews || [];
 
     const handleClose = () => { setIsVisible(false); };
     const toggleDetails = () => { setIsDetailsVisible(prev => !prev); };
@@ -27,22 +45,14 @@ const CustomOverlayContent = ({ additionalInfo }) => {
 
     const goToHomepage = () => { if (additionalInfo.homePage) { window.open(additionalInfo.funeralPriceUrl, '_blank'); } };
     const goToPrice = () => { if (additionalInfo.funeralPriceUrl) { window.open(additionalInfo.funeralPriceUrl, '_blank'); } };
-    const goToReview1 = () => { if (additionalInfo.review1) { window.open(additionalInfo.review1, '_blank'); } };
-    const goToReview2 = () => { if (additionalInfo.review2) { window.open(additionalInfo.review2, '_blank'); } };
-    const goToReview3 = () => { if (additionalInfo.review3) { window.open(additionalInfo.review3, '_blank'); } };
+    const goToReview1 = () => { if (storeReviews?.[0]?.originLink) { window.open(storeReviews?.[0]?.originLink, '_blank'); } };
+    const goToReview2 = () => { if (storeReviews?.[1]?.originLink) { window.open(storeReviews?.[1]?.originLink, '_blank'); } };
+    const goToReview3 = () => { if (storeReviews?.[2]?.originLink) { window.open(storeReviews?.[2]?.originLink, '_blank'); } };
     const goToAllReview = () => { if (additionalInfo.url) { window.open(additionalInfo.url, '_blank'); } };
+
 
     if (!isVisible) return null;
 
-    const images = Object.values(additionalInfo.photo || {});
-
-    const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-    };
 
 
 
@@ -59,13 +69,6 @@ const CustomOverlayContent = ({ additionalInfo }) => {
             </TitleWrapper>
             <ContentsWrapper>
                 <ContentsPhoto>
-                    {/* <Slider {...settings}>
-                        {images.map((img, index) => (
-                            <ImageWrapper key={index}>
-                                <Image src={img} alt={`Image ${index + 1}`} />
-                            </ImageWrapper>
-                        ))}
-                    </Slider> */}
                     <ImageWrapper>
                         <Image
                             src={additionalInfo.photo || NonThumbNail}
@@ -156,7 +159,7 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                                 후기 1
                             </Caption>
                             <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
-                                {displayInfo(additionalInfo.review1)}
+                                {displayInfo(storeReviews?.[0]?.title.replace(/_/g, ' '))}
                             </Caption>
                         </TextRowReviewTable>
                     </TextRow>
@@ -167,7 +170,7 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                                 후기 2
                             </Caption>
                             <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
-                                {displayInfo(additionalInfo.review2)}
+                                {displayInfo(storeReviews?.[1]?.title.replace(/_/g, ' '))}
                             </Caption>
                         </TextRowReviewTable>
                     </TextRow>
@@ -178,7 +181,7 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                                 후기 3
                             </Caption>
                             <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600">
-                                {displayInfo(additionalInfo.review3)}
+                                {displayInfo(storeReviews?.[2]?.title.replace(/_/g, ' '))}
                             </Caption>
                         </TextRowReviewTable>
                     </TextRow>

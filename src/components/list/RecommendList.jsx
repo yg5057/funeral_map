@@ -17,7 +17,7 @@ import AccessTimeRoundedIcon from '@mui/icons-material/AccessTimeRounded';
 
 
 const RecommendList = ({ data }) => {
-    const dataArray = Array.isArray(data) ? data : Object.values(data);
+    const dataArray = data?.data || [];
     const limitedData = dataArray.slice(0, 10);
 
     const displayInfo = (info) => info ? ` ${info}` : '정보 없음';
@@ -30,6 +30,11 @@ const RecommendList = ({ data }) => {
     };
     const displaySkill = (skill) => skill ? ` ${skill} 면허 보유` : '정보 없음';
 
+    const goToReservation = (url) => {
+        window.open(url, '_blank', 'noopener,noreferrer');
+    };
+
+
     return (
         <ListContainer>
             {limitedData.map((place, index) => (
@@ -39,12 +44,14 @@ const RecommendList = ({ data }) => {
                             <Image
                                 src={place.thumbnail || NonThumbNail}
                                 alt={`image_thumbnail`}
-                                onError={(e) => e.target.src = NonThumbNail}
+                                referrerPolicy="no-referrer"
+                                onError={(e) => e.target.src = NonThumbNail
+                                }
                             />
                         </ImageWrapper>
                     </ContentsPhoto>
                     <H6 fontFamily='var(--font-family-primary)' textAlign="center" fontWeight="700">
-                        [{place.address.slice(0, 2)}] {place.storeName}
+                        [{place.address ? place.address.slice(0, 2) : ' '}] {place.storeName}
                     </H6>
                     <TextWrap>
                         <TextRow>
@@ -109,10 +116,16 @@ const RecommendList = ({ data }) => {
                         </TextRowTop> */}
                     </TextWrap>
                     <BottomWrap>
-                        <CostBox>
-                            예상 장례비용은 <Span>{displayPrice(place.calculatePrice)}</Span> 입니다.
-                        </CostBox>
-                        <Button background="#E2BB8F" borderRadius='10px'>
+                        {place.calculatePrice && (
+                            <CostBox>
+                                예상 장례비용은 <Span>{displayPrice(place.calculatePrice)}</Span> 입니다.
+                            </CostBox>
+                        )}
+                        <Button
+                            onClick={() => goToReservation(place.reservationLink)}
+                            background="#E2BB8F"
+                            borderRadius='10px'
+                        >
                             <ButtonConts> 예약하기 </ButtonConts>
                         </Button>
                     </BottomWrap>

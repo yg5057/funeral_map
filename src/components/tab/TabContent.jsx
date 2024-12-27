@@ -31,8 +31,7 @@ const TabContent = ({ activeTab, place }) => {
         fetchPlaces();
     }, []);
 
-
-
+    const store = placesDetail?.store || [];
     const storeDetail = placesDetail?.storeDetail || [];
     const storeReviews = placesDetail?.storeReviews || [];
 
@@ -45,6 +44,9 @@ const TabContent = ({ activeTab, place }) => {
         return `${numericPrice.toLocaleString()} 원`;
     };
     const displaySkill = (skill) => skill ? ` ${skill} 면허 보유` : '정보 없음';
+
+    const goToReservation = () => { if (store.reservationLink) { window.open(store.reservationLink, '_blank'); } };
+    console.log(store.reservationLink)
 
 
     switch (activeTab) {
@@ -109,7 +111,7 @@ const TabContent = ({ activeTab, place }) => {
                                 {storeDetail.length > 0 ? storeDetail[0].authenticationNumber : '정보 없음.'}
                             </ParagraphM>
                         </TabContentTextWrapper>
-                        <Button background="#E2BB8F" borderRadius='10px'>
+                        <Button onClick={goToReservation} background="#E2BB8F" borderRadius='10px'>
                             <ButtonConts> 예약하기 </ButtonConts>
                         </Button>
                     </TabContentWrapper>
@@ -169,7 +171,7 @@ const TabContent = ({ activeTab, place }) => {
                             </InfoRowWrap>
                         </TabContentTextWrapper>
                         <TabContentTextWrapper>
-                            <Button background="#E2BB8F" borderRadius='10px'>
+                            <Button onClick={goToReservation} background="#E2BB8F" borderRadius='10px'>
                                 <ButtonConts> 예약하기 </ButtonConts>
                             </Button>
                         </TabContentTextWrapper>

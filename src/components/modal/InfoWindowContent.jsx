@@ -48,7 +48,6 @@ const InfoWindowContent = ({ distance, duration, additionalInfo }) => {
     const goToReview1 = () => { if (storeReviews?.[0]?.originLink) { window.open(storeReviews?.[0]?.originLink, '_blank'); } };
     const goToReview2 = () => { if (storeReviews?.[1]?.originLink) { window.open(storeReviews?.[1]?.originLink, '_blank'); } };
     const goToReview3 = () => { if (storeReviews?.[2]?.originLink) { window.open(storeReviews?.[2]?.originLink, '_blank'); } };
-    const goToAllReview = () => { if (additionalInfo.url) { window.open(additionalInfo.url, '_blank'); } };
 
     if (!isVisible) return null;
 
@@ -203,12 +202,6 @@ const InfoWindowContent = ({ distance, duration, additionalInfo }) => {
                     </TextRow>
                     <TextRow>
                         <div />
-                        <TextRowTable onClick={goToAllReview} style={{ cursor: 'pointer' }}>
-                            <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600" color="var(--InfoWindow-conts-title)">
-                                전체 후기 보러 가기
-                            </Caption>
-                            <FontAwesomeIcon icon={faCircleRight} style={{ color: "#D59962", }} />
-                        </TextRowTable>
                     </TextRow>
                 </ContentsBottom>
             </ContentsWrapper>

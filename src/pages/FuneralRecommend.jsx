@@ -79,9 +79,7 @@ const FuneralRecommend = () => {
             </MainView>
 
             {/* 모달 */}
-            <Modal isOpen={isModalOpen} onClose={closeModal} onSubmit={handleSubmit}>
-
-            </Modal>
+            <Modal isOpen={isModalOpen} onClose={closeModal} onSubmit={handleSubmit} />
         </Wrapper>
     )
 }

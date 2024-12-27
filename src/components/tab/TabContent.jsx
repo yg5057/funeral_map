@@ -4,11 +4,15 @@ import styled from 'styled-components';
 
 import H6 from '../typo/H6';
 import ParagraphM from '../typo/ParagraphM';
+import ParagraphS from '../typo/ParagraphS';
 import Caption from '../typo/Caption';
 import Placeholder from '../typo/Placeholder';
 import Button from '../button/Button';
+import NonThumbNail from '../../assets/images/non_thumbnail.png';
+
 import StarRoundedIcon from '@mui/icons-material/StarRounded';
 import ProgressBar from '../progressBar/ProgressBar';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 
 const TabContent = ({ activeTab, place }) => {
@@ -28,10 +32,11 @@ const TabContent = ({ activeTab, place }) => {
     }, []);
 
 
+
     const storeDetail = placesDetail?.storeDetail || [];
     const storeReviews = placesDetail?.storeReviews || [];
 
-    console.log(storeDetail)
+    console.log(storeReviews)
 
     const displayInfo = (info) => info ? ` ${info}` : '정보 없음';
     const displayPrice = (price) => {
@@ -180,95 +185,150 @@ const TabContent = ({ activeTab, place }) => {
                         <H6 fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="700" color="#21262B">
                             장례식장 대표 후기
                         </H6>
-                        <BoxWrap>
-                            <BoxConts onClick={() => {
-                                if (place.review1) {
-                                    window.open(place.review1, '_blank');
-                                } else {
-                                    alert('리뷰 링크가 없습니다.');
-                                }
-                            }}>
-                                <BoxImageWrapper>
-                                    <Image src='/data/images/mainbanner.png' alt={'review-img'} />
-                                </BoxImageWrapper>
-                                <BoxTextWrapper>
-                                    <ParagraphM textAlign='left' fontWeight='500' color='#21262B'>
-                                        반려동물장례식장 펫포레스트 김포 고양이 장례후기(상실아, 잘가)
-                                    </ParagraphM>
-                                </BoxTextWrapper>
-                            </BoxConts>
-                            <RateBoxWrap>
-                                <RateBoxRow>
-                                    <RateBoxColumn>
-                                        <Caption width='100%' textAlign='left' fontWeight='600' color='#371C13'>작성 신뢰도</Caption>
-                                        <RateWrap>
-                                            <RatePercent>
-                                                <ProgressBar score={place.score} />
-                                            </RatePercent>
-                                            <span>{place.score ? `${(place.score / 10) * 100}%` : ''}</span>
-                                        </RateWrap>
-                                    </RateBoxColumn>
-                                    <RateBoxColumn>
-                                        <Caption width='100%' textAlign='left' fontWeight='600' color='#371C13'>서비스 만족도</Caption>
-                                        <RateWrap>
-                                            <RateStar>
-                                                {Array.from({ length: 5 }, (_, index) => (
-                                                    <StarRoundedIcon
-                                                        key={index}
-                                                        sx={{
-                                                            color: index < Math.round(place.score) ? '#D59962' : '#e0e0e0',
-                                                            fontSize: '1.2rem'
-                                                        }}
-                                                    />
-                                                ))}
-                                            </RateStar>
-                                            <span>{place.score || ''}점</span>
-                                        </RateWrap>
-                                    </RateBoxColumn>
-                                </RateBoxRow>
-                                <RateBoxRow>
-                                    <RateBoxColumn>
-                                        <Caption width='100%' textAlign='left' fontWeight='600' color='#371C13'>가격 만족도</Caption>
-                                        <RateWrap>
-                                            <RateStar>
-                                                {Array.from({ length: 5 }, (_, index) => (
-                                                    <StarRoundedIcon
-                                                        key={index}
-                                                        sx={{
-                                                            color: index < Math.round(place.score) ? '#D59962' : '#e0e0e0',
-                                                            fontSize: '1.2rem'
-                                                        }}
-                                                    />
-                                                ))}
-                                            </RateStar>
-                                            <span>{place.score || ''}점</span>
-                                        </RateWrap>
-                                    </RateBoxColumn>
-                                    <RateBoxColumn>
-                                        <Caption width='100%' textAlign='left' fontWeight='600' color='#371C13'>분위기 만족도</Caption>
-                                        <RateWrap>
-                                            <RateStar>
-                                                {Array.from({ length: 5 }, (_, index) => (
-                                                    <StarRoundedIcon
-                                                        key={index}
-                                                        sx={{
-                                                            color: index < Math.round(place.score) ? '#D59962' : '#e0e0e0',
-                                                            fontSize: '1.2rem'
-                                                        }}
-                                                    />
-                                                ))}
-                                            </RateStar>
-                                            <span>{place.score || ''}점</span>
-                                        </RateWrap>
-                                    </RateBoxColumn>
-                                </RateBoxRow>
-                                <RateBoxRow>
-                                    <Placeholder width='100%' textAlign='left' fontWeight='500' color='#D59962'>
-                                        * 장례식장 후기의 모든 평점은 AI 분석을 통해 소비자  리뷰를 분석하여 산출된 점수임을 밝힙니다.
-                                    </Placeholder>
-                                </RateBoxRow>
-                            </RateBoxWrap>
-                        </BoxWrap>
+                        {storeReviews.length > 0 ? (
+                            storeReviews.map((review, index) => (
+                                <BoxWrap key={index}>
+                                    <BoxConts onClick={() => {
+                                        if (review.originLink) {
+                                            window.open(review.originLink, '_blank');
+                                        } else {
+                                            alert('리뷰 링크가 없습니다.');
+                                        }
+                                    }}>
+                                        <BoxImageWrapper>
+                                            <Image
+                                                src={review.thumbnail || NonThumbNail}
+                                                alt={`review-img-${index}`}
+                                                referrerPolicy="no-referrer"
+                                                onError={(e) => e.target.src = NonThumbNail}
+                                            />
+                                        </BoxImageWrapper>
+                                        <BoxTextWrapper>
+                                            <ParagraphM textAlign='left' fontWeight='500' color='#21262B'>
+                                                {review.title.replace(/_/g, ' ') || '제목 없음'}
+                                            </ParagraphM>
+                                            <ParagraphS textAlign='left' fontWeight='600' color='#D59962'>
+                                                리뷰 보기 <ArrowForwardIosIcon fontSize="small" color='#D59962' />
+                                            </ParagraphS>
+                                        </BoxTextWrapper>
+                                    </BoxConts>
+                                    <RateBoxWrap>
+                                        <RateBoxRow>
+                                            <RateBoxColumn>
+                                                <Caption width='100%' textAlign='left' fontWeight='600' color='#371C13'>작성 신뢰도</Caption>
+                                                <RateWrap>
+                                                    <RatePercent>
+                                                        <ProgressBar score={review.createReliability} />
+                                                    </RatePercent>
+                                                    <RateSpan>{review.createReliability ? `${(review.createReliability / 10) * 100}%` : ''}</RateSpan>
+                                                </RateWrap>
+                                            </RateBoxColumn>
+                                            <RateBoxColumn>
+                                                <Caption width='100%' textAlign='left' fontWeight='600' color='#371C13'>서비스 만족도</Caption>
+                                                <RateWrap>
+                                                    <RateStar>
+                                                        {Array.from({ length: 5 }, (_, index) => {
+                                                            const isHalf = review.serviceSatisfaction / 2 > index && review.serviceSatisfaction / 2 < index + 1;
+
+                                                            return isHalf ? (
+                                                                <StarRoundedIcon
+                                                                    key={`${index}-half`}
+                                                                    sx={{
+                                                                        color: '#D59962',
+                                                                        fontSize: '1.2rem',
+                                                                        clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // 왼쪽 반쪽만 표시
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <StarRoundedIcon
+                                                                    key={index}
+                                                                    sx={{
+                                                                        color: index < Math.floor(review.serviceSatisfaction / 2) ? '#D59962' : '#e0e0e0',
+                                                                        fontSize: '1.2rem',
+                                                                    }}
+                                                                />
+                                                            );
+                                                        })}
+                                                    </RateStar>
+                                                    <RateSpan>{review.serviceSatisfaction / 2 || ''}점</RateSpan>
+                                                </RateWrap>
+                                            </RateBoxColumn>
+                                        </RateBoxRow>
+                                        <RateBoxRow>
+                                            <RateBoxColumn>
+                                                <Caption width='100%' textAlign='left' fontWeight='600' color='#371C13'>가격 만족도</Caption>
+                                                <RateWrap>
+                                                    <RateStar>
+                                                        {Array.from({ length: 5 }, (_, index) => {
+                                                            const isHalf = review.priceSatisfaction / 2 > index && review.priceSatisfaction / 2 < index + 1;
+
+                                                            return isHalf ? (
+                                                                <StarRoundedIcon
+                                                                    key={`${index}-half`}
+                                                                    sx={{
+                                                                        color: '#D59962',
+                                                                        fontSize: '1.2rem',
+                                                                        clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // 왼쪽 반쪽만 표시
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <StarRoundedIcon
+                                                                    key={index}
+                                                                    sx={{
+                                                                        color: index < Math.floor(review.priceSatisfaction / 2) ? '#D59962' : '#e0e0e0',
+                                                                        fontSize: '1.2rem',
+                                                                    }}
+                                                                />
+                                                            );
+                                                        })}
+                                                    </RateStar>
+                                                    <RateSpan>{review.priceSatisfaction / 2 || ''}점</RateSpan>
+                                                </RateWrap>
+                                            </RateBoxColumn>
+                                            <RateBoxColumn>
+                                                <Caption width='100%' textAlign='left' fontWeight='600' color='#371C13'>분위기 만족도</Caption>
+                                                <RateWrap>
+                                                    <RateStar>
+                                                        {Array.from({ length: 5 }, (_, index) => {
+                                                            const isHalf = review.moodSatisfaction / 2 > index && review.moodSatisfaction / 2 < index + 1;
+
+                                                            return isHalf ? (
+                                                                <StarRoundedIcon
+                                                                    key={`${index}-half`}
+                                                                    sx={{
+                                                                        color: '#D59962',
+                                                                        fontSize: '1.2rem',
+                                                                        clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // 왼쪽 반쪽만 표시
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <StarRoundedIcon
+                                                                    key={index}
+                                                                    sx={{
+                                                                        color: index < Math.floor(review.moodSatisfaction / 2) ? '#D59962' : '#e0e0e0',
+                                                                        fontSize: '1.2rem',
+                                                                    }}
+                                                                />
+                                                            );
+                                                        })}
+                                                    </RateStar>
+                                                    <RateSpan>{review.moodSatisfaction / 2 || ''}점</RateSpan>
+                                                </RateWrap>
+                                            </RateBoxColumn>
+                                        </RateBoxRow>
+                                        <RateBoxRow>
+                                            <Placeholder width='100%' textAlign='left' fontWeight='500' color='#D59962'>
+                                                * 장례식장 후기의 모든 평점은 AI 분석을 통해 소비자  리뷰를 분석하여 산출된 점수임을 밝힙니다.
+                                            </Placeholder>
+                                        </RateBoxRow>
+                                    </RateBoxWrap>
+                                </BoxWrap>
+                            ))
+                        ) : (
+                            <Placeholder width='100%' textAlign='center' fontWeight='500' color='#D59962'>
+                                리뷰가 없습니다.
+                            </Placeholder>
+                        )}
                     </TabContentWrapper>
                 </>
             );
@@ -432,4 +492,8 @@ const RateStar = styled.div`
     display: flex;
     align-items: center;
     gap: .4rem;
+`;
+const RateSpan = styled.span`
+    width: 2.3rem;
+    text-align: center;
 `;

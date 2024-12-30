@@ -49,7 +49,16 @@ const ListView = ({ setEndAddress, searchQuery, showOverlay }) => {
     };
 
     if (loading) {
-        return <div>로딩 중...</div>;
+        return <ListContainer>
+            <ParagraphM
+                fontFamily='var(--font-family-primary)'
+                textAlign="center"
+                fontWeight="600"
+                color="var(--Default-White)"
+            >
+                로딩 중...
+            </ParagraphM>
+        </ListContainer>;
     }
 
 

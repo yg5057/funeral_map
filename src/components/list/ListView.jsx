@@ -123,14 +123,17 @@ export default ListView;
 
 
 const ListContainer = styled.ul`
-  height: 100%;
-  overflow-y: scroll;
+    width: 100%;
+    max-width: 50rem;
+    height: 100%;
+    overflow-y: scroll;
 `;
 
 const ListItem = styled.li`
     display: flex;
     flex-direction: row;
     width: 100%;
+    max-width: 50rem;
     min-height: 7rem;
     padding: 1rem;
     align-items: center;

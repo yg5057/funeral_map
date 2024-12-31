@@ -28,7 +28,7 @@ const Main = () => {
                 </ImageWrapper>
                 <ListWrapper>
                     <ListItem>
-                        <H6 color={'var(--AlbescentWhite-950)'} fontWeight={'700'}>
+                        <H6 color={'var(--AlbescentWhite-950)'} fontWeight={'700'} textAlign={'left'}>
                             내 주변 반려동물 장례식장 찾기
                         </H6>
                         <ChipWrapper>
@@ -52,7 +52,7 @@ const Main = () => {
                     </ListItem>
 
                     <ListItem>
-                        <H6 color={'var(--AlbescentWhite-950)'} fontWeight={'700'}>
+                        <H6 color={'var(--AlbescentWhite-950)'} fontWeight={'700'} textAlign={'left'}>
                             반려동물 장례식장 추천 받기
                         </H6>
                         <ContsBoxWrapper>
@@ -71,7 +71,7 @@ const Main = () => {
                     </ListItem>
 
                     <ListItem>
-                        <H6 color={'var(--AlbescentWhite-950)'} fontWeight={'700'}>
+                        <H6 color={'var(--AlbescentWhite-950)'} fontWeight={'700'} textAlign={'left'}>
                             #무지개별# 이야기 보러가기
                         </H6>
                         <ContsBoxWrapper>
@@ -79,8 +79,8 @@ const Main = () => {
                                 <img src='/data/images/thumbnail02.png' alt='thumbnail' />
                             </ThumbnailWrapper>
                             <TextWrapper>
-                                <ParagraphS color={'var(--Outer-Space-600)'} fontWeight={'500'}>#무지개별#은 다른 곳에서 공감받지 못한 그 어떤 이야기, 어떤 감정도 공감</ParagraphS>
-                                <ParagraphS color={'var(--Outer-Space-600)'} fontWeight={'500'}>받고 위로받고 치유받을 수 있는 공간입니다.</ParagraphS>
+                                <ParagraphS textAlign={'left'} color={'var(--Outer-Space-600)'} fontWeight={'500'}>#무지개별#은 다른 곳에서 공감받지 못한 그 어떤 이야기, 어떤 감정도 공감</ParagraphS>
+                                <ParagraphS textAlign={'left'} color={'var(--Outer-Space-600)'} fontWeight={'500'}>받고 위로받고 치유받을 수 있는 공간입니다.</ParagraphS>
                             </TextWrapper>
                         </ContsBoxWrapper>
                         <BtnOutLine width={'100%'} fontWeight={'600'} onClick={goToRainbowShop}>
@@ -109,6 +109,7 @@ const Wrapper = styled.section`
 `;
 const ImageWrapper = styled.div`
     width: 100%;
+    max-width: 50rem;
     height: fit-content;
     display: flex;
     justify-content: center;
@@ -160,12 +161,14 @@ const ContsBoxWrapper = styled.div`
 `;
 const ThumbnailWrapper = styled.div`
     width: 100%;
+    max-width: 50rem;
+    height: fit-content;
     display: flex;
     justify-content: center;
     background-color: var(--Default-White);
-    overflow: hidden;
     img {
-        width: 452px; 
+        width: 100%;
+        max-width: 452px;
         height: 235px; 
         object-fit: cover; 
         border-radius: 10px 10px 0px 0px;

@@ -72,8 +72,9 @@ const clickAnimationClose = keyframes`
 
 
 const BottomSheetContainer = styled.div`
-    width: 50rem;
-    height: ${(props) => (props.isOpen ? '50rem' : '0')};
+    width: 100%;
+    max-width: 50rem;
+    height: ${(props) => (props.isOpen ? '60%' : '0')};
     background-color: var(--White);
     position: absolute;
     left: 0;

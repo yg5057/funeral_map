@@ -34,7 +34,7 @@ const clickAnimationClose = keyframes`
 const Button = styled.button`
   position: absolute;
   left: 0;
-  bottom: ${(props) => (props.isOpen ? '50rem' : '0')};
+  bottom: ${(props) => (props.isOpen ? '60%' : '0')};
   display: flex;
   width: 50rem;
   height: fit-content;

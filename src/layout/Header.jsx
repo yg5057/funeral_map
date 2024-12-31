@@ -52,6 +52,9 @@ const LogoText = styled.h1`
     font-size: 32px;
     font-weight: 300;
     cursor: pointer;
+    @media (max-width: 420px) {
+        font-size: 20px;
+    }
 `;
 
 const SubMenuWrapper = styled.div`

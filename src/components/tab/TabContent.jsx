@@ -45,8 +45,7 @@ const TabContent = ({ activeTab, place }) => {
     };
     const displaySkill = (skill) => skill ? ` ${skill} 면허 보유` : '정보 없음';
 
-    const goToReservation = () => { if (store.reservationLink) { window.open(store.reservationLink, '_blank'); } };
-    console.log(store.reservationLink)
+    const goToReservation = () => { if (store[0]?.reservationLink) { window.open(store[0]?.reservationLink, '_blank'); } };
 
 
     switch (activeTab) {

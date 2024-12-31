@@ -141,6 +141,7 @@ export default RecommendList;
 
 const ListContainer = styled.ul`
     width: 100%;
+    max-width: 50rem;
     height: 100%;
     min-height: 100vh;
     display: flex;
@@ -151,6 +152,8 @@ const ListItem = styled.li`
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-width: 50rem;
+    height: fit-content;
     min-height: 7rem;
     padding: 3.2rem 2.4rem;
     align-items: flex-start;
@@ -158,15 +161,20 @@ const ListItem = styled.li`
     border-bottom: 1px solid var(--Grey);
     background: var(--Default-White);
     cursor: pointer;
+    @media (max-width: 420px) {
+        padding: 2.4rem 1.6rem;
+    }
 `;
 
 const ContentsPhoto = styled.div`
     width: 100%;
-    height: 32rem;
+    height: fit-content;
+    max-height: 32rem;
     border-radius: 10px;
 `;
 
 const ImageWrapper = styled.div`
+    width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -177,7 +185,7 @@ const Image = styled.img`
     width: 100%;
     height: 32rem;
     max-height: 100%;
-    object-fit: contain;
+    object-fit: cover;
 `;
 
 const TextWrap = styled.div`
@@ -253,6 +261,10 @@ const CostBox = styled.div`
     word-wrap: break-word;
     word-break: keep-all;
     text-align: center;
+    @media (max-width: 400px) {
+        font-size: 14px;
+        text-align: left;
+    }
 `;
 const ButtonConts = styled.div`
     display: flex;

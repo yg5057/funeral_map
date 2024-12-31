@@ -21,21 +21,77 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
         productOption: '',
     });
 
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessages, setErrorMessages] = useState({ location: '', address: '', animalWight: '' });
 
+    // const handleChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setFormData((prev) => ({ ...prev, [name]: value }));
+    // };
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+
+        // 실시간 에러 메시지 초기화
+        if (errorMessages[name]) {
+            setErrorMessages((prev) => ({ ...prev, [name]: '' }));
+        }
     };
 
-    const handleSubmit = () => {
-        if (!formData.animalWight) {
-            setErrorMessage('반려동물 무게는 필수 입력 사항입니다.');
-            return;
-        }
+    // const handleSubmit = () => {
+    //     if (!formData.animalWight) {
+    //         setErrorMessage('반려동물 무게는 필수 입력 사항입니다.');
+    //         return;
+    //     }
 
-        setErrorMessage('');
-        onSubmit(formData);
+    //     setErrorMessage('');
+    //     onSubmit(formData);
+    // };
+
+    // const handleSubmit = () => {
+    //     if (!formData.animalWight) {
+    //         setErrorMessage('반려동물 무게는 필수 입력 사항입니다.');
+    //         return;
+    //     }
+    //     if (!formData.location) {
+    //         setErrorMessage('거주 지역은 필수 입력 사항입니다.');
+    //         return;
+    //     }
+    //     if (!formData.address) {
+    //         setErrorMessage('상세 주소는 필수 입력 사항입니다.');
+    //         return;
+    //     }
+
+    //     const sanitizedData = { ...formData };
+    //     Object.keys(sanitizedData).forEach((key) => {
+    //         if (!sanitizedData[key]) {
+    //             sanitizedData[key] = '';
+    //         }
+    //     });
+
+    //     setErrorMessage('');
+    //     onSubmit(sanitizedData);
+    // };
+    const handleSubmit = () => {
+        const errors = {
+            location: !formData.location ? '거주 지역은 필수 입력 사항입니다.' : '',
+            address: !formData.address ? '상세 주소는 필수 입력 사항입니다.' : '',
+            animalWight: !formData.animalWight ? '반려동물 무게는 필수 입력 사항입니다.' : '',
+        };
+
+        setErrorMessages(errors);
+
+        // 에러가 없을 때만 제출
+        const hasErrors = Object.values(errors).some((msg) => msg !== '');
+        if (hasErrors) return;
+
+        const sanitizedData = { ...formData };
+        Object.keys(sanitizedData).forEach((key) => {
+            if (!sanitizedData[key]) {
+                sanitizedData[key] = '';
+            }
+        });
+
+        onSubmit(sanitizedData);
     };
 
     if (!isOpen) return null;
@@ -91,6 +147,7 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
                                 }}
                             />
                         </SelectWrapper>
+                        {errorMessages.location && <ErrorMessage>{errorMessages.location}</ErrorMessage>}
                         <Input
                             type="text"
                             placeholder="상세 주소를 입력해주세요"
@@ -98,6 +155,7 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
                             value={formData.address}
                             onChange={handleChange}
                         />
+                        {errorMessages.address && <ErrorMessage>{errorMessages.address}</ErrorMessage>}
                     </InputRow>
 
                     <InputRow>
@@ -137,7 +195,7 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
                             value={formData.animalWight}
                             onChange={handleChange}
                         />
-                        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+                        {errorMessages.animalWight && <ErrorMessage>{errorMessages.animalWight}</ErrorMessage>}
                     </InputRow>
 
                     <InputRow>

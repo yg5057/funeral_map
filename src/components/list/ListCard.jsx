@@ -237,6 +237,7 @@ export default ListCard;
 
 const ListContainer = styled.ul`
     width: 100%;
+    max-width: 50rem;
     height: 100%;
     min-height: 100vh;
     display: flex;
@@ -245,6 +246,7 @@ const ListContainer = styled.ul`
 `;
 const ChipWrapper = styled.div`
     width: 100%;
+    max-width: 50rem;
     height: fit-content;
     display: flex;
     flex-direction: row;
@@ -258,6 +260,7 @@ const ListItem = styled.li`
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-width: 50rem;
     min-height: 7rem;
     padding: 3.2rem 2.4rem;
     align-items: flex-start;
@@ -279,11 +282,13 @@ const ListItemNull = styled.li`
 
 const ContentsPhoto = styled.div`
     width: 100%;
+    max-width: 50rem;
     height: 32rem;
     border-radius: 10px;
 `;
 
 const ImageWrapper = styled.div`
+    width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;

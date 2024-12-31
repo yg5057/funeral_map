@@ -50,7 +50,7 @@ const ListDetailView = ({ place, onBack }) => {
                         />
                     </ImageWrapper>
                 </ContentsPhoto>
-                <H6 fontFamily='var(--font-family-primary)' textAlign="center" fontWeight="700">
+                <H6 fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="700">
                     [{place.area}] {place.storeName}
                 </H6>
                 <TextWrap>
@@ -173,6 +173,7 @@ const DetailContainer = styled.ul`
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-width: 50rem;
     height: fit-content;
     gap: 2.4rem;
 `;

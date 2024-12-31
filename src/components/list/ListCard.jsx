@@ -42,10 +42,9 @@ const ListCard = () => {
                 setPlaces(placesWithArea || []);
                 setFilteredPlaces(placesWithArea || []);
                 if (placeIdFromUrl) {
-                    // place.id와 placeIdFromUrl을 문자열로 비교
                     const place = placesWithArea.find(place => String(place.id) === String(placeIdFromUrl));
                     if (place) {
-                        setSelectedPlace(place);  // 해당 place를 선택
+                        setSelectedPlace(place);
                     }
                 }
             } catch (error) {

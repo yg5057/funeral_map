@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaw, faTimes, faCircleRight, faCircleChevronDown } from '@fortawesome/free-solid-svg-icons';
 
@@ -32,6 +31,7 @@ const CustomOverlayContent = ({ additionalInfo }) => {
 
     const storeReviews = placesDetail?.storeReviews || [];
 
+
     const handleClose = () => { setIsVisible(false); };
     const toggleDetails = () => { setIsDetailsVisible(prev => !prev); };
     const displayInfo = (info) => { return info ? info : '정보 없음'; };
@@ -48,6 +48,8 @@ const CustomOverlayContent = ({ additionalInfo }) => {
     const goToReview1 = () => { if (storeReviews?.[0]?.originLink) { window.open(storeReviews?.[0]?.originLink, '_blank'); } };
     const goToReview2 = () => { if (storeReviews?.[1]?.originLink) { window.open(storeReviews?.[1]?.originLink, '_blank'); } };
     const goToReview3 = () => { if (storeReviews?.[2]?.originLink) { window.open(storeReviews?.[2]?.originLink, '_blank'); } };
+    const goToStoreDetail = () => { if (additionalInfo.id) { window.location.href = `/area?id=${additionalInfo.id}`; } };
+
 
 
     if (!isVisible) return null;
@@ -183,6 +185,15 @@ const CustomOverlayContent = ({ additionalInfo }) => {
                                 {displayInfo(storeReviews?.[2]?.title.replace(/_/g, ' '))}
                             </Caption>
                         </TextRowReviewTable>
+                    </TextRow>
+                    <TextRow>
+                        <div />
+                        <TextRowTable onClick={goToStoreDetail} style={{ cursor: 'pointer' }}>
+                            <Caption fontFamily='var(--font-family-primary)' textAlign="left" fontWeight="600" color="var(--InfoWindow-conts-title)">
+                                업체 상세 보기
+                            </Caption>
+                            <FontAwesomeIcon icon={faCircleRight} size="xl" style={{ color: "#D59962", }} />
+                        </TextRowTable>
                     </TextRow>
                 </ContentsBottom>
             </ContentsWrapper>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
 
 import H6 from '../typo/H6';
 import ParagraphM from '../typo/ParagraphM';
@@ -25,6 +26,10 @@ const ListCard = () => {
     const [selectedPlace, setSelectedPlace] = useState(null);
     const itemsPerPage = 10;
 
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const placeIdFromUrl = queryParams.get('id');
+
 
     useEffect(() => {
         const fetchPlaces = async () => {
@@ -36,13 +41,22 @@ const ListCard = () => {
                 }));
                 setPlaces(placesWithArea || []);
                 setFilteredPlaces(placesWithArea || []);
+                if (placeIdFromUrl) {
+                    // place.id와 placeIdFromUrl을 문자열로 비교
+                    const place = placesWithArea.find(place => String(place.id) === String(placeIdFromUrl));
+                    if (place) {
+                        setSelectedPlace(place);  // 해당 place를 선택
+                    }
+                }
             } catch (error) {
                 console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
             }
         };
 
+
         fetchPlaces();
-    }, []);
+    }, [placeIdFromUrl]);
+
 
 
     // 지역 추출 함수

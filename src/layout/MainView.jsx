@@ -21,9 +21,9 @@ const MainViewWrapper = styled.section`
     justify-content: flex-start;
     align-items: center;
     position: relative;
-    width: 50rem;
+    width: 100%;
     height: fit-content;
-    max-width: 100%;
+    max-width: 50rem;
     background: var(--Default-Whit);
     box-shadow: 25px 0px 60px -10px rgba(28, 39, 49, 0.12);
     overflow-y: auto; 

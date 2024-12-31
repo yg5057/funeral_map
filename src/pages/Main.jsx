@@ -116,8 +116,8 @@ const ImageWrapper = styled.div`
     margin-bottom: 2.4rem; 
     background-color: var(--Default-White);
     img {
-        max-width: 100%;
-        height: fit-content; 
+        width: 100%;
+        max-width: 50rem;
         object-fit: cover; 
     }
 `;

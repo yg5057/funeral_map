@@ -19,6 +19,7 @@ const GlobalStyles = createGlobalStyle`
     line-height: 1.15;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
   }
   ::-webkit-scrollbar { display: none; } 
@@ -27,6 +28,10 @@ const GlobalStyles = createGlobalStyle`
     max-width: 100%;
   }
   input, button, textarea, select {
+    appearance: none;
+    -webkit-appearance: none; 
+    -moz-appearance: none;
+    border-radius: 0;
     font: inherit;
   }
   input {
